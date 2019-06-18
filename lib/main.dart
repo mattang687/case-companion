@@ -30,11 +30,6 @@ class FlutterBlueApp extends StatefulWidget {
 class _FlutterBlueAppState extends State<FlutterBlueApp> {
   FlutterBlue _flutterBlue = FlutterBlue.instance;
 
-  /// Scanning
-  StreamSubscription _scanSubscription;
-  Map<DeviceIdentifier, ScanResult> scanResults = new Map();
-  bool isScanning = false;
-
   /// State
   StreamSubscription _stateSubscription;
   BluetoothState state = BluetoothState.unknown;
@@ -76,82 +71,6 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
     super.dispose();
   }
 
-  _startScan() {
-    _scanSubscription = _flutterBlue
-        .scan(
-      timeout: const Duration(seconds: 5),
-      /*withServices: [
-          new Guid('0000180F-0000-1000-8000-00805F9B34FB')
-        ]*/
-    )
-        .listen((scanResult) {
-      print('localName: ${scanResult.advertisementData.localName}');
-      print(
-          'manufacturerData: ${scanResult.advertisementData.manufacturerData}');
-      print('serviceData: ${scanResult.advertisementData.serviceData}');
-      setState(() {
-        scanResults[scanResult.device.id] = scanResult;
-      });
-    }, onDone: _stopScan);
-
-    setState(() {
-      isScanning = true;
-    });
-  }
-
-  _stopScan() {
-    _scanSubscription?.cancel();
-    _scanSubscription = null;
-    setState(() {
-      isScanning = false;
-    });
-  }
-
-  _connect(BluetoothDevice d) async {
-    device = d;
-    // Connect to device
-    deviceConnection = _flutterBlue
-        .connect(device, timeout: const Duration(seconds: 4))
-        .listen(
-          null,
-          onDone: _disconnect,
-        );
-
-    // Update the connection state immediately
-    device.state.then((s) {
-      setState(() {
-        deviceState = s;
-      });
-    });
-
-    // Subscribe to connection changes
-    deviceStateSubscription = device.onStateChanged().listen((s) {
-      setState(() {
-        deviceState = s;
-      });
-      if (s == BluetoothDeviceState.connected) {
-        device.discoverServices().then((s) {
-          setState(() {
-            services = s;
-          });
-        });
-      }
-    });
-  }
-
-  _disconnect() {
-    // Remove all value changed listeners
-    valueChangedSubscriptions.forEach((uuid, sub) => sub.cancel());
-    valueChangedSubscriptions.clear();
-    deviceStateSubscription?.cancel();
-    deviceStateSubscription = null;
-    deviceConnection?.cancel();
-    deviceConnection = null;
-    setState(() {
-      device = null;
-    });
-  }
-
   _readCharacteristic(BluetoothCharacteristic c) async {
     _parseRead(c, await device.readCharacteristic(c));
     setState(() {});
@@ -182,42 +101,6 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
     }
   }
 
-  _writeCharacteristic(BluetoothCharacteristic c) async {
-    await device.writeCharacteristic(c, [0x12, 0x34],
-        type: CharacteristicWriteType.withResponse);
-    setState(() {});
-  }
-
-  _readDescriptor(BluetoothDescriptor d) async {
-    await device.readDescriptor(d);
-    setState(() {});
-  }
-
-  _writeDescriptor(BluetoothDescriptor d) async {
-    await device.writeDescriptor(d, [0x12, 0x34]);
-    setState(() {});
-  }
-
-  _setNotification(BluetoothCharacteristic c) async {
-    if (c.isNotifying) {
-      await device.setNotifyValue(c, false);
-      // Cancel subscription
-      valueChangedSubscriptions[c.uuid]?.cancel();
-      valueChangedSubscriptions.remove(c.uuid);
-    } else {
-      await device.setNotifyValue(c, true);
-      // ignore: cancel_subscriptions
-      final sub = device.onValueChanged(c).listen((d) {
-        setState(() {
-          print('onValueChanged $d');
-        });
-      });
-      // Add to map
-      valueChangedSubscriptions[c.uuid] = sub;
-    }
-    setState(() {});
-  }
-
   _refreshDeviceState(BluetoothDevice d) async {
     var state = await d.state;
     setState(() {
@@ -226,60 +109,35 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
     });
   }
 
-  _buildScanResultTiles() {
-    return scanResults.values
-        .map((r) => ScanResultTile(
-              result: r,
-              onTap: () => _connect(r.device),
-            ))
-        .toList();
-  }
-
-  List<Widget> _buildServiceTiles() {
-    return services
-        .map(
-          (s) => new ServiceTile(
-                service: s,
-                characteristicTiles: s.characteristics
-                    .map(
-                      (c) => new CharacteristicTile(
-                            characteristic: c,
-                            onReadPressed: () => _readCharacteristic(c),
-                            onWritePressed: () => _writeCharacteristic(c),
-                            onNotificationPressed: () => _setNotification(c),
-                            descriptorTiles: c.descriptors
-                                .map(
-                                  (d) => new DescriptorTile(
-                                        descriptor: d,
-                                        onReadPressed: () => _readDescriptor(d),
-                                        onWritePressed: () =>
-                                            _writeDescriptor(d),
-                                      ),
-                                )
-                                .toList(),
-                          ),
-                    )
-                    .toList(),
-              ),
-        )
-        .toList();
-  }
-
-  _buildAlertTile() {
-    return new Container(
-      color: Colors.redAccent,
-      child: new ListTile(
-        title: new Text(
-          'Bluetooth adapter is ${state.toString().substring(15)}',
-          style: Theme.of(context).primaryTextTheme.subhead,
-        ),
-        trailing: new Icon(
-          Icons.error,
-          color: Theme.of(context).primaryTextTheme.subhead.color,
-        ),
-      ),
-    );
-  }
+  // List<Widget> _buildServiceTiles() {
+  //   return services
+  //       .map(
+  //         (s) => new ServiceTile(
+  //               service: s,
+  //               characteristicTiles: s.characteristics
+  //                   .map(
+  //                     (c) => new CharacteristicTile(
+  //                           characteristic: c,
+  //                           onReadPressed: () => _readCharacteristic(c),
+  //                           onWritePressed: () => _writeCharacteristic(c),
+  //                           onNotificationPressed: () => _setNotification(c),
+  //                           descriptorTiles: c.descriptors
+  //                               .map(
+  //                                 (d) => new DescriptorTile(
+  //                                       descriptor: d,
+  //                                       onReadPressed: () => _readDescriptor(d),
+  //                                       onWritePressed: () =>
+  //                                           _writeDescriptor(d),
+  //                                     ),
+  //                               )
+  //                               .toList(),
+  //                         ),
+  //                   )
+  //                   .toList(),
+  //             ),
+  //       )
+  //       .toList();
+  // }
 
   _buildDeviceStateTile() {
     return new ListTile(
@@ -295,12 +153,8 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
         ));
   }
 
-  _buildProgressBarTile() {
-    return new LinearProgressIndicator();
-  }
-
   _buildScanButton() {
-    if (isConnected || state != BluetoothState.on) {
+    if (state != BluetoothState.on) {
       return  <Widget>[new Container()];
     } else {
       return <Widget>[
@@ -348,44 +202,6 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
 //   }
 // }
 
-class SecondPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: AppBar(
-        title: Text("secondpage")
-      ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Go back!'),
-        ),
-      ),
-    );
-  }
-}
-
-// class SecondRoute extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("Second Route"),
-//       ),
-//       body: Center(
-//         child: RaisedButton(
-//           onPressed: () {
-//             Navigator.pop(context);
-//           },
-//           child: Text('Go back!'),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 /*
 var tiles = new List<Widget>();
                   if (state != BluetoothState.on) {
@@ -415,3 +231,39 @@ var tiles = new List<Widget>();
                     ),
                   );
 */
+
+
+class BluetoothInfo {
+  FlutterBlue flutterBlue;
+
+  /// State
+  StreamSubscription stateSubscription;
+  BluetoothState state;
+
+  /// Device
+  BluetoothDevice device;
+  StreamSubscription deviceConnection;
+  StreamSubscription deviceStateSubscription;
+  List<BluetoothService> services;
+  Map<Guid, StreamSubscription> valueChangedSubscriptions;
+  BluetoothDeviceState deviceState;
+
+  BluetoothInfo (
+    this.flutterBlue,
+    this.stateSubscription,
+    this.state,
+    this.device,
+    this.deviceConnection,
+    this.deviceStateSubscription,
+    this.services,
+    this.valueChangedSubscriptions,
+    this.deviceState
+  );
+}
+
+class DeviceInfo {
+
+}
+
+// want to get device back
+// pass necessary info to get device
