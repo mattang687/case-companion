@@ -33,7 +33,7 @@ class _ScanRouteState extends BTWidgetState {
             connect(r.device);
           },
           onDisconnectTap: () => disconnect(),
-          btInfo: btInfo
+          btInfo: btInfo,
         ))
         .toList();
   }
