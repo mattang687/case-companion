@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:myapp/ble.dart';
 import 'package:myapp/main.dart';
 
 import 'widgets.dart';
@@ -14,14 +15,28 @@ import 'widgets.dart';
   will have a connect button, which will turn into a red disconnect
   button when connected.
 */
-class ScanRoute extends StatefulWidget {
-  
-  @override
-  State<StatefulWidget> createState() => new _ScanRouteState();
+class ScanRoute extends BTWidget {
+  ScanRoute(BTInfo btInfo) : super(btInfo);
 
+  @override
+  State<StatefulWidget> createState() => new _ScanRouteState(btInfo);
 }
 
-class _ScanRouteState extends State<ScanRoute> {
+class _ScanRouteState extends BTWidgetState {
+  _ScanRouteState(BTInfo btInfo) : super(btInfo);
+
+
+  _buildScanResultTiles() {
+    return btInfo.scanResults.values
+        .map((r) => ScanResultTile(
+              result: r,
+              onConnectTap: () => connect(r.device),
+              onDisconnectTap: () => disconnect(),
+              btInfo: btInfo
+            ))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,24 +46,20 @@ class _ScanRouteState extends State<ScanRoute> {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              // start scan
+              startScan();
             },
           ),
-          IconButton(
-            icon: Icon(Icons.cancel),
-            onPressed: () {
-              // disconnect
-            },
-          )
         ],
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Center(
-        child: Text("Scan results go here")
-      )
+      body: Stack(children: <Widget>[
+        (btInfo.isScanning) ? LinearProgressIndicator() : Container(),
+        Text("btInfo exists from route:  ${btInfo != null}"),
+        ListView(children: _buildScanResultTiles())
+      ],)
     );
   }
 }
