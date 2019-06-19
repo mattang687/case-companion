@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:myapp/ble.dart';
 import 'package:myapp/main.dart';
-
 import 'widgets.dart';
 
 /*
@@ -29,7 +28,10 @@ class _ScanRouteState extends BTWidgetState {
     return btInfo.scanResults.values
         .map((r) => ScanResultTile(
           result: r,
-          onConnectTap: () => connect(r.device),
+          onConnectTap: () {
+            disconnect(); 
+            connect(r.device);
+          },
           onDisconnectTap: () => disconnect(),
           btInfo: btInfo
         ))
@@ -44,12 +46,29 @@ class _ScanRouteState extends BTWidgetState {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () => startScan()
+            onPressed: () {
+              startScan();
+            }
           ),
+          IconButton(
+            icon: Icon(Icons.cancel),
+            onPressed: () {
+              disconnect();
+            }
+          ),
+          IconButton(
+            icon: Icon(Icons.cancel),
+            onPressed: () {
+              stopScan();
+            }
+          )
         ],
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            stopScan();
+            Navigator.pop(context);
+          },
         ),
       ),
       body: Stack(children: <Widget>[

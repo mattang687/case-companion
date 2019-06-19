@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -28,17 +29,6 @@ abstract class BTWidgetState extends State<BTWidget> {
         btInfo.state = s;
       });
     });
-  }
-
-  @override
-  void dispose() {
-    btInfo.stateSubscription?.cancel();
-    btInfo.stateSubscription = null;
-    btInfo.scanSubscription?.cancel();
-    btInfo.scanSubscription = null;
-    btInfo.deviceConnection?.cancel();
-    btInfo.deviceConnection = null;
-    super.dispose();
   }
 
   startScan() {
@@ -72,17 +62,16 @@ abstract class BTWidgetState extends State<BTWidget> {
       btInfo.isScanning = false;
     });
   }
-
   connect(BluetoothDevice d) async {
-    print("CONNECT STARTED");
     btInfo.device = d;
     // Connect to device
     btInfo.deviceConnection = btInfo.flutterBlue
-        .connect(btInfo.device, timeout: const Duration(seconds: 4))
-        .listen(
-          null,
-          onDone: disconnect,
-        );
+      .connect(btInfo.device, timeout: const Duration(seconds: 4))
+      .listen(
+        null,
+        onDone: disconnect,
+      );
+    
 
     // Update the connection state immediately
     btInfo.device.state.then((s) {

@@ -50,6 +50,40 @@ class _CaseCompanionAppState extends BTWidgetState {
   }
 
   @override
+  void dispose() {
+    btInfo.stateSubscription?.cancel();
+    btInfo.stateSubscription = null;
+    btInfo.scanSubscription?.cancel();
+    btInfo.scanSubscription = null;
+    btInfo.deviceConnection?.cancel();
+    btInfo.deviceConnection = null;
+    super.dispose();
+  }
+
+  Widget _buildDebug () {
+    return Center(child: Column(children: <Widget>[
+        IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: () => setState(() {}),
+        ),
+        Text("device: ${btInfo.device != null ? btInfo.device.name : "device is null"}"),
+        Text("btInfo exists: ${btInfo != null}"),
+        Text("isConnected: ${btInfo.isConnected}"),
+        Text("FlutterBlue instance exists: ${btInfo.flutterBlue != null}"),
+        Text("scanResults exists: ${btInfo.scanResults != null}"),
+        Text("isScanning: ${btInfo.isScanning}"),
+        Text("state: ${btInfo.state.toString()}"),
+        Text("stateSubscription exists: ${btInfo.stateSubscription != null}"),
+        Text("numServices: ${btInfo.services == null ? "services is null": btInfo.services.length}"), 
+        Text("deviceState: ${btInfo.deviceState.toString()}"),
+        Text("scanSubscription exists: ${btInfo.scanSubscription != null}"),
+        Text("deviceConnection exists: ${btInfo.deviceConnection != null}"),
+        Text("deviceStateSubscription exists: ${btInfo.deviceStateSubscription != null}"),
+        Text("valueChangedSubscriptions exists: ${btInfo.valueChangedSubscriptions != null}"),
+      ],));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -66,9 +100,7 @@ class _CaseCompanionAppState extends BTWidgetState {
           )
         ],
       ),
-      body: Center(
-        child: Text("btInfo exists: ${btInfo != null} \nisConnected: ${btInfo.device != null} \nnumServices: ${btInfo.services == null ? "services is null": btInfo.services.length}")
-      )
+      body: _buildDebug()
     );
   }
 }

@@ -46,7 +46,7 @@ class ScanResultTileState extends State<ScanResultTile> {
   }
 
   Widget _buildButton() {
-    if (result.device == btInfo.device) {
+    if (btInfo.device != null && result.device.id == btInfo.device.id) {
       return RaisedButton(
         child: Text("DISCONNECT"),
         color: Colors.red,
