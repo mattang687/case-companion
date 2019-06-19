@@ -7,9 +7,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:myapp/ble.dart';
 
 class ScanResultTile extends StatefulWidget {
-  ScanResultTile({Key key, @required this.result, 
-    @required this.onConnectTap, @required this.onDisconnectTap, 
-    @required btInfo}) : super(key: key);
+  ScanResultTile({this.result, this.onConnectTap, this.onDisconnectTap, this.btInfo});
   final ScanResult result;
   final VoidCallback onConnectTap;
   final VoidCallback onDisconnectTap;
@@ -53,14 +51,14 @@ class ScanResultTileState extends State<ScanResultTile> {
         child: Text("DISCONNECT"),
         color: Colors.red,
         textColor: Colors.white,
-        onPressed: () => onDisconnectTap
+        onPressed: () => onDisconnectTap()
       );
     } else {
       return RaisedButton(
         child: Text('CONNECT'),
         color: Colors.black,
         textColor: Colors.white,
-        onPressed: () => (result.advertisementData.connectable) ? onConnectTap : null
+        onPressed: () => onConnectTap()//(result.advertisementData.connectable) ? onConnectTap : null
       );
     }
   }
@@ -69,9 +67,7 @@ class ScanResultTileState extends State<ScanResultTile> {
   Widget build(BuildContext context) {
     return ListTile(
       title: _buildTitle(context),
-      trailing: 
-        Text("btInfo exists from scanResultTile:  ${btInfo != null}")
-        // _buildButton()
+      trailing: _buildButton()
     );
   }
 }

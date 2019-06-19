@@ -74,6 +74,7 @@ abstract class BTWidgetState extends State<BTWidget> {
   }
 
   connect(BluetoothDevice d) async {
+    print("CONNECT STARTED");
     btInfo.device = d;
     // Connect to device
     btInfo.deviceConnection = btInfo.flutterBlue
@@ -113,6 +114,8 @@ abstract class BTWidgetState extends State<BTWidget> {
     btInfo.deviceStateSubscription = null;
     btInfo.deviceConnection?.cancel();
     btInfo.deviceConnection = null;
+    // Clear Services
+    btInfo.services = new List();
     setState(() {
       btInfo.device = null;
     });

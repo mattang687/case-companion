@@ -9,7 +9,7 @@ import 'widgets.dart';
 
 /*
   This is where the user scans for and connects to BLE devices.
-  When entering this screen, a BT scan is immediately started.
+  When entering this route, a BT scan is immediately started.
   Afterwards, the user can pull down to start another scan. As
   the scan detects devices, it will list them out. Each list item
   will have a connect button, which will turn into a red disconnect
@@ -25,15 +25,14 @@ class ScanRoute extends BTWidget {
 class _ScanRouteState extends BTWidgetState {
   _ScanRouteState(BTInfo btInfo) : super(btInfo);
 
-
   _buildScanResultTiles() {
     return btInfo.scanResults.values
         .map((r) => ScanResultTile(
-              result: r,
-              onConnectTap: () => connect(r.device),
-              onDisconnectTap: () => disconnect(),
-              btInfo: btInfo
-            ))
+          result: r,
+          onConnectTap: () => connect(r.device),
+          onDisconnectTap: () => disconnect(),
+          btInfo: btInfo
+        ))
         .toList();
   }
 
@@ -45,9 +44,7 @@ class _ScanRouteState extends BTWidgetState {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () {
-              startScan();
-            },
+            onPressed: () => startScan()
           ),
         ],
         leading: IconButton(
@@ -57,7 +54,6 @@ class _ScanRouteState extends BTWidgetState {
       ),
       body: Stack(children: <Widget>[
         (btInfo.isScanning) ? LinearProgressIndicator() : Container(),
-        Text("btInfo exists from route:  ${btInfo != null}"),
         ListView(children: _buildScanResultTiles())
       ],)
     );
