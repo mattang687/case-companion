@@ -54,7 +54,7 @@ class ScanResultTileState extends State<ScanResultTile> {
         child: Text('CONNECT'),
         color: (result.advertisementData.connectable) ? Colors.black : Colors.grey,
         textColor: Colors.white,
-        onPressed: () => (result.advertisementData.connectable) ? onConnectTap : null
+        onPressed: () => (result.advertisementData.connectable) ? onConnectTap() : null
       );
     }
   }
