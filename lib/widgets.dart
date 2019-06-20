@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:myapp/ble.dart';
 import 'package:myapp/main.dart';
@@ -115,7 +116,7 @@ class TempWidgetState extends State<TempWidget> {
     );
 
     List<int> ret = await btInfo.device.readCharacteristic(temp);
-    int sum = ret[1] * 512 + ret[0];
+    int sum = ret[1] * 256 + ret[0];
     return sum ~/ 100;
   }
 
@@ -125,19 +126,27 @@ class TempWidgetState extends State<TempWidget> {
     BluetoothCharacteristic temp = BluetoothCharacteristic(
       descriptors: <BluetoothDescriptor>[], 
       properties: null, 
-      serviceUuid: new Guid("00002A19-0000-1000-8000-00805F9B34FB"), 
-      uuid: new Guid("00002901-0000-1000-8000-00805F9B34FB")
+      serviceUuid: new Guid("0000180F-0000-1000-8000-00805F9B34FB"), 
+      uuid: new Guid("00002A19-0000-1000-8000-00805F9B34FB")
     );
 
     List<int> ret = await btInfo.device.readCharacteristic(temp);
-    return ret[1];
+    return ret[0];
+  }
+
+  Future<List<int>> readData() async {
+    List<int> ret = new List<int>(3);
+    ret[0] = await readTemp();
+    ret[1] = await readHum();
+    ret[2] = await readBat();
+    return ret;
   }
 
   @override
   Widget build(BuildContext context) {
-    return btInfo.isConnected ? FutureBuilder<int>(
-      future: readTemp(),
-      builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+    return btInfo.isConnected ? FutureBuilder<List<int>>(
+      future: readData(),
+      builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
             return Text('Connect to a device.');
@@ -151,6 +160,6 @@ class TempWidgetState extends State<TempWidget> {
         }
         return null; // unreachable
       },
-    ) : Text('Temperature: device not connected');
+    ) : Text('Data: device not connected');
   }
 }
