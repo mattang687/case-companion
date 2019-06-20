@@ -84,7 +84,7 @@ class TempWidgetState extends State<TempWidget> {
   BTInfo btInfo;
   double temperature;
 
-  Future<double> readTemp() async {
+  Future<int> readTemp() async {
     // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
     // two bytes, most significant last, two's complement for negative numbers
     BluetoothCharacteristic temp = BluetoothCharacteristic(
@@ -98,13 +98,13 @@ class TempWidgetState extends State<TempWidget> {
     int sum = ret[1] * 256 + ret[0];
     if (ret[1] > 127) {
       // negative, find two's complement
-      return -(65536 - sum) / 100;
+      return -(65536 - sum) ~/ 100;
     } else {
-      return sum / 100;
+      return sum ~/ 100;
     }
   }
 
-  Future<double> readHum() async {
+  Future<int> readHum() async {
     // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
     // two bytes, most significant last, unsigned
     BluetoothCharacteristic temp = BluetoothCharacteristic(
@@ -116,14 +116,28 @@ class TempWidgetState extends State<TempWidget> {
 
     List<int> ret = await btInfo.device.readCharacteristic(temp);
     int sum = ret[1] * 512 + ret[0];
-    return sum / 100;
+    return sum ~/ 100;
+  }
+
+  Future<int> readBat() async {
+    // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
+    // one byte, unsigned
+    BluetoothCharacteristic temp = BluetoothCharacteristic(
+      descriptors: <BluetoothDescriptor>[], 
+      properties: null, 
+      serviceUuid: new Guid("00002A19-0000-1000-8000-00805F9B34FB"), 
+      uuid: new Guid("00002901-0000-1000-8000-00805F9B34FB")
+    );
+
+    List<int> ret = await btInfo.device.readCharacteristic(temp);
+    return ret[1];
   }
 
   @override
   Widget build(BuildContext context) {
-    return btInfo.isConnected ? FutureBuilder<double>(
+    return btInfo.isConnected ? FutureBuilder<int>(
       future: readTemp(),
-      builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
             return Text('Connect to a device.');
@@ -136,7 +150,7 @@ class TempWidgetState extends State<TempWidget> {
             return Text('Temperature: ${snapshot.data.toString()}');
         }
         return null; // unreachable
-  },
+      },
     ) : Text('Temperature: device not connected');
   }
 }
