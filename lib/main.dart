@@ -44,11 +44,6 @@ class CaseCompanionApp extends BTWidget {
 class _CaseCompanionAppState extends BTWidgetState {
   _CaseCompanionAppState(BTInfo btInfo) : super(btInfo);
 
-  _readCharacteristic(BluetoothCharacteristic c) async {
-    await btInfo.device.readCharacteristic(c);
-    setState(() {});
-  }
-
   @override
   void dispose() {
     btInfo.stateSubscription?.cancel();
@@ -80,6 +75,7 @@ class _CaseCompanionAppState extends BTWidgetState {
         Text("deviceConnection exists: ${btInfo.deviceConnection != null}"),
         Text("deviceStateSubscription exists: ${btInfo.deviceStateSubscription != null}"),
         Text("valueChangedSubscriptions exists: ${btInfo.valueChangedSubscriptions != null}"),
+        TempWidget(btInfo),
       ],));
   }
 
