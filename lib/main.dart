@@ -139,7 +139,7 @@ class _CaseCompanionAppState extends BTWidgetState {
     if (isUpdating) {
       return Icon(Icons.bluetooth_searching);
     }
-    return Text('$temp\u00b0 C');
+    return new TempWidget(temp);
   }
 
   Widget buildHum() {
@@ -149,7 +149,7 @@ class _CaseCompanionAppState extends BTWidgetState {
     if (isUpdating) {
       return Icon(Icons.bluetooth_searching);
     }
-    return Text('$hum%');
+    return HumWidget(hum);
   }
 
   Widget buildBat() {
@@ -159,7 +159,7 @@ class _CaseCompanionAppState extends BTWidgetState {
     if (isUpdating) {
       return Icon(Icons.bluetooth_searching);
     }
-    return Text('$bat%');
+    return BatWidget(bat);
   }
 
   Widget buildUpdateButton() {

@@ -87,3 +87,33 @@ class ScanResultTileState extends State<ScanResultTile> {
     );
   }
 }
+
+class TempWidget extends StatelessWidget {
+  const TempWidget(this.temp);
+  final int temp;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('$temp\u00b0 C');
+  }
+}
+
+class HumWidget extends StatelessWidget {
+  const HumWidget(this.hum);
+  final int hum;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('$hum\u00b0 C');
+  }
+}
+
+class BatWidget extends StatelessWidget {
+  const BatWidget(this.bat);
+  final int bat;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('$bat\u00b0 C');
+  }
+}
