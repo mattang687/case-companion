@@ -9,5 +9,6 @@ This is my first time using Flutter, so suggestions are very welcome!
 * Automatically connect to the last used device
 * Pretty layout for the home screen
 * Data should wait until all characteristics have been read so they all load in at the same time, while remaining separate widgets
+* Settings page to switch between Celsius and Fahrenheit
 * Graph of data over time
 * Data transfer for values stored by the ESP32 while not connected
