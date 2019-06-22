@@ -28,6 +28,7 @@ class _ScanRouteState extends BTWidgetState {
         .map((r) => ScanResultTile(
           result: r,
           onConnectTap: () {
+            stopScan();
             disconnect(); 
             connect(r.device);
           },
@@ -35,6 +36,15 @@ class _ScanRouteState extends BTWidgetState {
           btInfo: btInfo,
         ))
         .toList();
+  }
+
+  Future<bool> _scan() async {
+    // return true when done
+    startScan();
+    while (btInfo.isScanning) {
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+    return true;
   }
 
   @override
@@ -71,8 +81,13 @@ class _ScanRouteState extends BTWidgetState {
         ),
       ),
       body: Stack(children: <Widget>[
-        (btInfo.isScanning) ? LinearProgressIndicator() : Container(),
-        ListView(children: _buildScanResultTiles())
+        RefreshIndicator(
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(), 
+            children: _buildScanResultTiles()
+          ),
+          onRefresh: _scan,
+       )
       ],)
     );
   }
