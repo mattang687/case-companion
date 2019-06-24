@@ -1,9 +1,45 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:flutter/services.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+
+class  BTInfo {
+  FlutterBlue flutterBlue;
+
+  /// Scanning
+  StreamSubscription scanSubscription;
+  Map<DeviceIdentifier, ScanResult> scanResults;
+  bool isScanning;
+
+  /// State
+  StreamSubscription stateSubscription;
+  BluetoothState state;
+
+  /// Device
+  BluetoothDevice device;
+  bool get isConnected => (device != null);
+  StreamSubscription deviceConnection;
+  StreamSubscription deviceStateSubscription;
+  List<BluetoothService> services;
+  Map<Guid, StreamSubscription> valueChangedSubscriptions;
+  BluetoothDeviceState deviceState;
+
+  BTInfo() {
+    flutterBlue = FlutterBlue.instance;
+    scanResults = new Map();
+    isScanning = false;
+    state = BluetoothState.unknown;
+    services = new List();
+    valueChangedSubscriptions = {};
+    deviceState = BluetoothDeviceState.disconnected;
+  }
+
+  dispose() {
+    scanSubscription.cancel();
+    stateSubscription.cancel();
+    deviceConnection.cancel();
+    deviceStateSubscription.cancel();
+  }
+}
 
 abstract class BTWidget extends StatefulWidget {
   final BTInfo btInfo;
@@ -42,10 +78,6 @@ abstract class BTWidgetState extends State<BTWidget> {
         ]*/
     )
         .listen((scanResult) {
-      print('localName: ${scanResult.advertisementData.localName}');
-      print(
-          'manufacturerData: ${scanResult.advertisementData.manufacturerData}');
-      print('serviceData: ${scanResult.advertisementData.serviceData}');
       setState(() {
         btInfo.scanResults[scanResult.device.id] = scanResult;
       });
@@ -109,44 +141,5 @@ abstract class BTWidgetState extends State<BTWidget> {
     setState(() {
       btInfo.device = null;
     });
-  }
-}
-
-class  BTInfo {
-  FlutterBlue flutterBlue;
-
-  /// Scanning
-  StreamSubscription scanSubscription;
-  Map<DeviceIdentifier, ScanResult> scanResults;
-  bool isScanning;
-
-  /// State
-  StreamSubscription stateSubscription;
-  BluetoothState state;
-
-  /// Device
-  BluetoothDevice device;
-  bool get isConnected => (device != null);
-  StreamSubscription deviceConnection;
-  StreamSubscription deviceStateSubscription;
-  List<BluetoothService> services;
-  Map<Guid, StreamSubscription> valueChangedSubscriptions;
-  BluetoothDeviceState deviceState;
-
-  BTInfo() {
-    flutterBlue = FlutterBlue.instance;
-    scanResults = new Map();
-    isScanning = false;
-    state = BluetoothState.unknown;
-    services = new List();
-    valueChangedSubscriptions = {};
-    deviceState = BluetoothDeviceState.disconnected;
-  }
-
-  dispose() {
-    scanSubscription.cancel();
-    stateSubscription.cancel();
-    deviceConnection.cancel();
-    deviceStateSubscription.cancel();
   }
 }

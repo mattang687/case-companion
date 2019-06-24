@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'ble.dart';
-import 'main.dart';
 
 class ScanResultTile extends StatefulWidget {
   const ScanResultTile({this.result, this.onConnectTap, this.onDisconnectTap, this.btInfo});
