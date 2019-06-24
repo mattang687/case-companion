@@ -73,9 +73,6 @@ abstract class BTWidgetState extends State<BTWidget> {
     btInfo.scanSubscription = btInfo.flutterBlue
         .scan(
       timeout: const Duration(seconds: 5),
-      /*withServices: [
-          new Guid('0000180F-0000-1000-8000-00805F9B34FB')
-        ]*/
     )
         .listen((scanResult) {
       setState(() {
@@ -95,6 +92,7 @@ abstract class BTWidgetState extends State<BTWidget> {
       btInfo.isScanning = false;
     });
   }
+
   connect(BluetoothDevice d) async {
     btInfo.device = d;
     // Connect to device
