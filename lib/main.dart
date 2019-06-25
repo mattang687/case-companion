@@ -165,7 +165,6 @@ class _HomePageState extends BTWidgetState {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return Scaffold(
       appBar: AppBar(
         title: Text("Case Companion"),

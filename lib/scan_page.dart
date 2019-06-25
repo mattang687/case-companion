@@ -66,7 +66,6 @@ class _ScanPageState extends BTWidgetState {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return WillPopScope(
       onWillPop: stopScan,
       child: Scaffold(
