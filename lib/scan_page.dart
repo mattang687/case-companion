@@ -65,34 +65,37 @@ class _ScanPageState extends BTWidgetState {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Connect to a device"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            stopScan();
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Stack(children: <Widget>[
-        RefreshIndicator(
-          child: btInfo.scanResults.length != 0 ? ListView(
-            physics: const AlwaysScrollableScrollPhysics(), 
-            children: _buildScanResultTiles()
-          ) : SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-              child: Container(
-                child: Center(
-                  child: !btInfo.isScanning ? PullToScanWidget() : Container()
-                  ),
-                height: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top
-              ),
+    return WillPopScope(
+      onWillPop: stopScan,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Connect to a device"),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              stopScan();
+              Navigator.pop(context);
+            },
           ),
-          onRefresh: _scan,
-       ),
-      ],)
+        ),
+        body: Stack(children: <Widget>[
+          RefreshIndicator(
+            child: btInfo.scanResults.length != 0 ? ListView(
+              physics: const AlwaysScrollableScrollPhysics(), 
+              children: _buildScanResultTiles()
+            ) : SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  child: Center(
+                    child: !btInfo.isScanning ? PullToScanWidget() : Container()
+                    ),
+                  height: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top
+                ),
+            ),
+            onRefresh: _scan,
+        ),
+        ],)
+      )
     );
   }
 }

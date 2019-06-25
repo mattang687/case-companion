@@ -85,12 +85,14 @@ abstract class BTWidgetState extends State<BTWidget> {
     });
   }
 
-  stopScan() {
+  Future<bool> stopScan() async {
+    // return true to satisfy WillPopScope widget
     btInfo.scanSubscription?.cancel();
     btInfo.scanSubscription = null;
     setState(() {
       btInfo.isScanning = false;
     });
+    return true;
   }
 
   connect(BluetoothDevice d) async {
