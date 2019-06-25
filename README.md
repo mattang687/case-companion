@@ -5,10 +5,10 @@ I'm using Flutter Blue to establish a connection to a BLE-enabled ESP32 and read
 This is my first time using Flutter, so suggestions are very welcome!
 
 #### Todo
-* Connected device should show up in scan results if the user starts a scan while connected to a device.
-* Automatically connect to the last used device
-* Pretty layout for the home screen
-* Data should wait until all characteristics have been read so they all load in at the same time, while remaining separate widgets
-* Settings page to switch between Celsius and Fahrenheit
-* Graph of data over time
-* Data transfer for values stored by the ESP32 while not connected
+- [x] Connected device should show up in scan results if the user starts a scan while connected to a device.
+- [ ] Automatically connect to the last used device
+- [ ] Pretty layout for the home screen
+- [x] Data should appear to update all at once
+- [ ] Settings page
+- [ ] Graph of data over time
+- [ ] Data transfer for values stored by the ESP32 while not connected
