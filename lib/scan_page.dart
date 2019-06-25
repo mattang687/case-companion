@@ -18,7 +18,6 @@ class _ScanPageState extends BTWidgetState {
   @override
   initState() {
     super.initState();
-    _buildConnectedDevice();
     btInfo.scanResults = new Map();
   }
 
