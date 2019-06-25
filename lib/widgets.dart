@@ -2,6 +2,81 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'ble.dart';
 
+class ConnectedDeviceTile extends StatefulWidget{
+  const ConnectedDeviceTile({this.onConnectTap, this.onDisconnectTap, this.btInfo});
+  final Function(BluetoothDevice d) onConnectTap;
+  final VoidCallback onDisconnectTap;
+  final BTInfo btInfo;
+
+  @override
+  State<StatefulWidget> createState() {
+    return ConnectedDeviceTileState();
+  }
+}
+
+class ConnectedDeviceTileState extends State<ConnectedDeviceTile> {
+  BluetoothDevice cachedDevice;
+
+  @override
+  initState() {
+    super.initState();
+    cachedDevice = widget.btInfo.device;
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    if (cachedDevice.name.length > 0) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(cachedDevice.name),
+          Text(
+            cachedDevice.id.toString(),
+            style: Theme.of(context).textTheme.caption,
+          )
+        ],
+      );
+    } else {
+      return Text(cachedDevice.id.toString());
+    }
+  }
+
+  Widget _buildButton() {
+    if (widget.btInfo.isConnected) {
+      return RaisedButton(
+        child: Text("DISCONNECT"),
+        color: Colors.red,
+        textColor: Colors.white,
+        onPressed: () {
+          setState(() {
+            widget.onDisconnectTap();
+          });
+        }
+      );
+    } else {
+      return RaisedButton(
+        child: Text('CONNECT'),
+        color: Colors.black,
+        textColor: Colors.white,
+        onPressed: () {
+          setState(() {
+            widget.onConnectTap(cachedDevice);
+          });
+        }
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: _buildTitle(context),
+      trailing: _buildButton()
+    );
+  }
+
+}
+
 class ScanResultTile extends StatefulWidget {
   const ScanResultTile({this.result, this.onConnectTap, this.onDisconnectTap, this.btInfo});
   final ScanResult result;
@@ -81,6 +156,22 @@ class ScanResultTileState extends State<ScanResultTile> {
     return ListTile(
       title: _buildTitle(context),
       trailing: _buildButton()
+    );
+  }
+}
+
+class PullToScanWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 10)),
+        Icon(Icons.arrow_upward),
+        Text('Pull to Scan')
+      ],
     );
   }
 }
