@@ -168,9 +168,9 @@ class PullToScanWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 10)),
-        Icon(Icons.arrow_upward),
-        Text('Pull to Scan')
+        Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 5)),
+        Text('Pull to Scan', style: TextStyle(color: Colors.grey)),
+        Icon(Icons.keyboard_arrow_down, color: Colors.grey,)
       ],
     );
   }
