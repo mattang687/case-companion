@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'ble.dart';
 import 'widgets.dart';
@@ -65,6 +66,7 @@ class _ScanPageState extends BTWidgetState {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return WillPopScope(
       onWillPop: stopScan,
       child: Scaffold(
@@ -89,7 +91,9 @@ class _ScanPageState extends BTWidgetState {
                   child: Center(
                     child: !btInfo.isScanning ? PullToScanWidget() : Container()
                     ),
-                  height: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top
+                  height: MediaQuery.of(context).size.height - kToolbarHeight 
+                    - MediaQuery.of(context).padding.top 
+                    - MediaQuery.of(context).padding.bottom
                 ),
             ),
             onRefresh: _scan,
