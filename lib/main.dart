@@ -37,7 +37,7 @@ class _HomePageState extends BTWidgetState {
     _updateData();
   }
 
-  _updateData() async {
+  Future<void> _updateData() async {
     Future<List<int>> _repeatedRead(BluetoothCharacteristic c) async {
       try {
         return await btInfo.device.readCharacteristic(c);
@@ -110,6 +110,7 @@ class _HomePageState extends BTWidgetState {
     }
     
     setState(() => isUpdating = false);
+    return;
   }
 
   Widget buildTemp() {
@@ -180,21 +181,30 @@ class _HomePageState extends BTWidgetState {
           )
         ],
       ),
-      body: Center(child: Column(
-        children: <Widget>[
-          buildUpdateButton(),
-          Row(children: <Widget>[
-            buildTemp(),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
-            buildHum()
-            ],
-            mainAxisAlignment: MainAxisAlignment.center,
-          ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-          buildBat(),
-        ],
-        mainAxisAlignment: MainAxisAlignment.center,
-      )
+      body: RefreshIndicator(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            child: Center(child: Column(
+              children: <Widget>[
+                Row(children: <Widget>[
+                  buildTemp(),
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                  buildHum()
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.center,
+                ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                buildBat(),
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
+            )),
+            height: MediaQuery.of(context).size.height - kToolbarHeight 
+              - MediaQuery.of(context).padding.top 
+              - MediaQuery.of(context).padding.bottom
+          )
+        ),
+        onRefresh: _updateData,
     ));
   }
 }
