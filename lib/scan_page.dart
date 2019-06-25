@@ -68,26 +68,6 @@ class _ScanPageState extends BTWidgetState {
     return Scaffold(
       appBar: AppBar(
         title: Text("Connect to a device"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              startScan();
-            }
-          ),
-          IconButton(
-            icon: Icon(Icons.cancel),
-            onPressed: () {
-              disconnect();
-            }
-          ),
-          IconButton(
-            icon: Icon(Icons.cancel),
-            onPressed: () {
-              stopScan();
-            }
-          )
-        ],
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
