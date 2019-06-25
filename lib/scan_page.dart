@@ -107,7 +107,7 @@ class _ScanPageState extends BTWidgetState {
                 child: Center(
                   child: !btInfo.isScanning ? PullToScanWidget() : Container()
                   ),
-                height: MediaQuery.of(context).size.height - kToolbarHeight
+                height: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top
               ),
           ),
           onRefresh: _scan,
