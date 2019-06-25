@@ -182,7 +182,7 @@ class TempWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('$temp\u00b0 C', style: TextStyle(fontSize: 50));
+    return Text('$temp\u00b0', style: TextStyle(fontSize: 50));
   }
 }
 
