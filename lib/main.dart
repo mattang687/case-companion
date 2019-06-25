@@ -113,46 +113,6 @@ class _HomePageState extends BTWidgetState {
     return;
   }
 
-  Widget buildTemp() {
-    if (!btInfo.isConnected) {
-      return Icon(Icons.bluetooth_disabled);
-    }
-    if (isUpdating) {
-      return Icon(Icons.bluetooth_searching);
-    }
-    return new TempWidget(temp);
-  }
-
-  Widget buildHum() {
-    if (!btInfo.isConnected) {
-      return Icon(Icons.bluetooth_disabled);
-    }
-    if (isUpdating) {
-      return Icon(Icons.bluetooth_searching);
-    }
-    return HumWidget(hum);
-  }
-
-  Widget buildBat() {
-    if (!btInfo.isConnected) {
-      return Icon(Icons.bluetooth_disabled);
-    }
-    if (isUpdating) {
-      return Icon(Icons.bluetooth_searching);
-    }
-    return BatWidget(bat);
-  }
-
-  Widget buildUpdateButton() {
-    return IconButton(
-      icon: Icon(Icons.refresh),
-      onPressed: () {
-        setState(() => isUpdating = true);
-        _updateData();
-      }
-    );
-  }
-
   @override
   void dispose() {
     btInfo.stateSubscription?.cancel();
@@ -184,24 +144,13 @@ class _HomePageState extends BTWidgetState {
       body: RefreshIndicator(
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          child: Container(
-            child: Center(child: Column(
-              children: <Widget>[
-                Row(children: <Widget>[
-                  buildTemp(),
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
-                  buildHum()
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                ),
-                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                buildBat(),
-              ],
-              mainAxisAlignment: MainAxisAlignment.center,
-            )),
-            height: MediaQuery.of(context).size.height - kToolbarHeight 
-              - MediaQuery.of(context).padding.top 
-              - MediaQuery.of(context).padding.bottom
+          child: Center(
+            child: Container(
+              child: InfoWidget(temp, hum, bat, btInfo),
+              height: MediaQuery.of(context).size.height - kToolbarHeight 
+                - MediaQuery.of(context).padding.top 
+                - MediaQuery.of(context).padding.bottom
+            )
           )
         ),
         onRefresh: _updateData,

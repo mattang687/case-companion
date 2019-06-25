@@ -182,7 +182,7 @@ class TempWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('$temp\u00b0 C');
+    return Text('$temp\u00b0 C', style: TextStyle(fontSize: 50));
   }
 }
 
@@ -192,7 +192,7 @@ class HumWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('$hum\u00b0 C');
+    return Text('$hum%', style: TextStyle(fontSize: 40));
   }
 }
 
@@ -202,6 +202,30 @@ class BatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('$bat\u00b0 C');
+    return Text('$bat%', style: TextStyle(fontSize: 16));
+  }
+}
+
+class InfoWidget extends StatelessWidget {
+  const InfoWidget(this.temp, this.hum, this.bat, this.btInfo);
+  final int temp;
+  final int hum;
+  final int bat;
+  final BTInfo btInfo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: btInfo.isConnected? <Widget>[
+        TempWidget(temp),
+        HumWidget(hum),
+        BatWidget(bat)
+      ] : <Widget> [
+        Text(
+          'Connect to a device to show data', 
+          style: TextStyle(color: Colors.grey)
+        )
+      ],
+    mainAxisAlignment: MainAxisAlignment.center,);
   }
 }
