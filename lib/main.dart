@@ -40,11 +40,11 @@ class _HomePageState extends BTWidgetState {
     return;
   }
 
-  Future<void> _flipUnitSetting() async {
+  Future<void> _setUnitSetting(bool value) async {
     final SharedPreferences prefs = await _prefs;
     setState(() {
-      inCelsius = !inCelsius;
-      prefs.setBool('inCelsius', inCelsius).then((bool success) => true);
+      inCelsius = value;
+      prefs.setBool('inCelsius', value).then((bool success) => true);
     });
   }
 
@@ -160,7 +160,7 @@ class _HomePageState extends BTWidgetState {
           physics: const AlwaysScrollableScrollPhysics(),
           child: Center(
             child: Container(
-              child: InfoWidget(temp, hum, bat, inCelsius, btInfo),
+              child: InfoWidget(temp, hum, inCelsius, btInfo),
               height: MediaQuery.of(context).size.height - kToolbarHeight 
                 - MediaQuery.of(context).padding.top 
                 - MediaQuery.of(context).padding.bottom
@@ -168,11 +168,66 @@ class _HomePageState extends BTWidgetState {
           )
         ),
         onRefresh: _updateData,
-    ),
-    floatingActionButton: FloatingActionButton(
-      child: Icon(Icons.free_breakfast),
-      onPressed: _flipUnitSetting,
-    ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.keyboard_arrow_up),
+        onPressed: () {
+          showModalBottomSheet<void>(context: context, builder: (BuildContext context) {
+            return Container(
+              height: 120,
+              child: Column(
+                children: <Widget>[
+                  DeviceInfoTile(btInfo, bat),
+                  ListTile(
+                    leading: Icon(Icons.wb_cloudy),
+                    title: Text('Celsius'),
+                    trailing: UnitSwitch(
+                      switchValue: inCelsius,
+                      valueChanged: (value) {
+                        _setUnitSetting(value);
+                      },
+                    )
+                  ),
+                ],
+              ),
+            );
+          });
+        }
+      )
+    );
+  }
+}
+
+class UnitSwitch extends StatefulWidget{
+  UnitSwitch({@required this.switchValue, @required this.valueChanged});
+  final bool switchValue;
+  final ValueChanged valueChanged;
+
+  @override
+  State<StatefulWidget> createState() {
+    return UnitSwitchState();
+  }
+}
+
+class UnitSwitchState extends State<UnitSwitch> {
+  bool _inCelsius;
+
+  @override
+  void initState() {
+    _inCelsius = widget.switchValue;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Switch(
+      value: _inCelsius,
+      onChanged: (bool value) {
+        setState(() {
+         _inCelsius = value;
+         widget.valueChanged(value); 
+        });
+      },
     );
   }
 }

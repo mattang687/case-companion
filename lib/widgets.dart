@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:myapp/scan_page.dart';
 import 'ble.dart';
 
 class ConnectedDeviceTile extends StatefulWidget{
@@ -177,11 +178,10 @@ class PullToScanWidget extends StatelessWidget {
 }
 
 class InfoWidget extends StatelessWidget {
-  const InfoWidget(this.temp, this.hum, this.bat, this.inCelsius, this.btInfo);
+  const InfoWidget(this.temp, this.hum, this.inCelsius, this.btInfo);
   final double temp;
   final bool inCelsius;
   final int hum;
-  final int bat;
   final BTInfo btInfo;
 
   Widget _buildTemp() {
@@ -198,17 +198,12 @@ class InfoWidget extends StatelessWidget {
     return Text('$hum%', style: TextStyle(fontSize: 40));
   }
 
-  Widget _buildBat() {
-    return Text('$bat%', style: TextStyle(fontSize: 16));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: btInfo.isConnected? <Widget>[
         _buildTemp(),
-        _buildHum(),
-        _buildBat()
+        _buildHum()
       ] : <Widget> [
         Text(
           'Connect to a device to show data', 
@@ -216,5 +211,21 @@ class InfoWidget extends StatelessWidget {
         )
       ],
     mainAxisAlignment: MainAxisAlignment.center,);
+  }
+}
+
+class DeviceInfoTile extends StatelessWidget {
+  const DeviceInfoTile(this.btInfo, this.bat);
+  final BTInfo btInfo;
+  final int bat;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(Icons.devices),
+      title: Text('${btInfo.isConnected ? btInfo.device.name : "not connected"}'),
+      trailing: Text('${bat ?? 0}%', style: TextStyle(fontSize: 16)),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ScanPage(btInfo)))
+    );
   }
 }
