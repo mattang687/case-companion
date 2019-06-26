@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'widgets.dart';
 import 'scan_page.dart';
@@ -26,15 +26,33 @@ class _HomePageState extends BTWidgetState {
   _HomePageState() : super();
 
   bool inCelsius = true;
-  bool isUpdating = false;
-  int temp;
+  double temp;
   int hum;
   int bat;
+
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  Future<void> _getUnitSetting() async {
+    final SharedPreferences prefs = await _prefs;
+    setState(() {
+      inCelsius = prefs.getBool('inCelsius') ?? true;
+    });
+    return;
+  }
+
+  Future<void> _flipUnitSetting() async {
+    final SharedPreferences prefs = await _prefs;
+    setState(() {
+      inCelsius = !inCelsius;
+      prefs.setBool('inCelsius', inCelsius).then((bool success) => true);
+    });
+  }
 
   @override
   initState() {
     super.initState();
     _updateData();
+    _getUnitSetting();
   }
 
   Future<void> _updateData() async {
@@ -47,7 +65,7 @@ class _HomePageState extends BTWidgetState {
       }
     }
 
-    Future<int> _readTemp() async {
+    Future<double> _readTemp() async {
       // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
       // two bytes, most significant last, two's complement for negative numbers
       BluetoothCharacteristic cTemp = BluetoothCharacteristic(
@@ -66,13 +84,9 @@ class _HomePageState extends BTWidgetState {
       } else {
         tgt = sum / 100;
       }
-      return tgt.round();
+      return tgt;
     }
-    // if (inCelsius) {
-    //   return tgt.round();
-    // } else {
-    //   return (tgt * 9 / 5 + 32).round();
-    // }
+    
 
     Future<int> _readHum() async {
       // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
@@ -109,7 +123,7 @@ class _HomePageState extends BTWidgetState {
       bat = await _readBat();
     }
     
-    setState(() => isUpdating = false);
+    setState(() {});
     return;
   }
 
@@ -146,7 +160,7 @@ class _HomePageState extends BTWidgetState {
           physics: const AlwaysScrollableScrollPhysics(),
           child: Center(
             child: Container(
-              child: InfoWidget(temp, hum, bat, btInfo),
+              child: InfoWidget(temp, hum, bat, inCelsius, btInfo),
               height: MediaQuery.of(context).size.height - kToolbarHeight 
                 - MediaQuery.of(context).padding.top 
                 - MediaQuery.of(context).padding.bottom
@@ -154,6 +168,11 @@ class _HomePageState extends BTWidgetState {
           )
         ),
         onRefresh: _updateData,
-    ));
+    ),
+    floatingActionButton: FloatingActionButton(
+      child: Icon(Icons.free_breakfast),
+      onPressed: _flipUnitSetting,
+    ),
+    );
   }
 }

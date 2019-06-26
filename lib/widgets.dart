@@ -176,50 +176,39 @@ class PullToScanWidget extends StatelessWidget {
   }
 }
 
-class TempWidget extends StatelessWidget {
-  const TempWidget(this.temp);
-  final int temp;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text('$temp\u00b0', style: TextStyle(fontSize: 50));
-  }
-}
-
-class HumWidget extends StatelessWidget {
-  const HumWidget(this.hum);
-  final int hum;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text('$hum%', style: TextStyle(fontSize: 40));
-  }
-}
-
-class BatWidget extends StatelessWidget {
-  const BatWidget(this.bat);
-  final int bat;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text('$bat%', style: TextStyle(fontSize: 16));
-  }
-}
-
 class InfoWidget extends StatelessWidget {
-  const InfoWidget(this.temp, this.hum, this.bat, this.btInfo);
-  final int temp;
+  const InfoWidget(this.temp, this.hum, this.bat, this.inCelsius, this.btInfo);
+  final double temp;
+  final bool inCelsius;
   final int hum;
   final int bat;
   final BTInfo btInfo;
+
+  Widget _buildTemp() {
+    int roundedTemp;
+    if (inCelsius) {
+      roundedTemp = (temp ?? 0).round();
+    } else {
+      roundedTemp = ((temp ?? 0) * 9 / 5 + 32).round();
+    }
+    return Text('$roundedTemp\u00b0', style: TextStyle(fontSize: 50));
+  }
+
+  Widget _buildHum() {
+    return Text('$hum%', style: TextStyle(fontSize: 40));
+  }
+
+  Widget _buildBat() {
+    return Text('$bat%', style: TextStyle(fontSize: 16));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: btInfo.isConnected? <Widget>[
-        TempWidget(temp),
-        HumWidget(hum),
-        BatWidget(bat)
+        _buildTemp(),
+        _buildHum(),
+        _buildBat()
       ] : <Widget> [
         Text(
           'Connect to a device to show data', 
