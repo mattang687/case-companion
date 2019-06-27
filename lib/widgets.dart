@@ -219,13 +219,35 @@ class DeviceInfoTile extends StatelessWidget {
   final BTInfo btInfo;
   final int bat;
 
+  Widget _buildTitle() {
+    return Column(
+      children: <Widget>[
+        Text('${btInfo.isConnected ? btInfo.device.name : "not connected"}'),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+        Text('${btInfo.isConnected ? 'Battery: $bat%' : ''}', 
+          style: TextStyle(
+              color: Colors.grey
+          ),
+        )
+      ],
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(Icons.devices),
-      title: Text('${btInfo.isConnected ? btInfo.device.name : "not connected"}'),
-      trailing: Text('${bat ?? 0}%', style: TextStyle(fontSize: 16)),
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ScanPage(btInfo)))
+      title: _buildTitle(),
+      trailing: RaisedButton(
+        child: Text('DEVICES'),
+        color: Colors.black,
+        textColor: Colors.white,
+        onPressed: () => Navigator.push(context, MaterialPageRoute(
+          builder: (context) => ScanPage(btInfo))
+        )
+      ),
     );
   }
 }
