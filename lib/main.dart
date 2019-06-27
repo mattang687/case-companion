@@ -143,17 +143,6 @@ class _HomePageState extends BTWidgetState {
     return Scaffold(
       appBar: AppBar(
         title: Text("Case Companion"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ScanPage(btInfo)),
-              );
-            },
-          )
-        ],
       ),
       body: RefreshIndicator(
         child: SingleChildScrollView(
