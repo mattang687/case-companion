@@ -220,11 +220,10 @@ class DeviceInfoTile extends StatelessWidget {
   final int bat;
 
   Widget _buildTitle() {
-    return Column(
+    return btInfo.isConnected ? Column(
       children: <Widget>[
-        Text('${btInfo.isConnected ? btInfo.device.name : "not connected"}'),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-        Text('${btInfo.isConnected ? 'Battery: $bat%' : ''}', 
+        Text('${btInfo.device.name}'),
+        Text('${'Battery: $bat%'}', 
           style: TextStyle(
               color: Colors.grey
           ),
@@ -232,7 +231,7 @@ class DeviceInfoTile extends StatelessWidget {
       ],
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
-    );
+    ) : Text('Not Connected');
   }
 
   @override
