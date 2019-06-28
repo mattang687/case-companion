@@ -4,7 +4,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'widgets.dart';
+import 'home_page_widgets.dart';
 import 'ble.dart';
 
 void main() {
@@ -185,40 +185,6 @@ class _HomePageState extends BTWidgetState {
           );
         },
       ),
-    );
-  }
-}
-
-class UnitSwitch extends StatefulWidget {
-  UnitSwitch({@required this.switchValue, @required this.valueChanged});
-  final bool switchValue;
-  final ValueChanged valueChanged;
-
-  @override
-  State<StatefulWidget> createState() {
-    return UnitSwitchState();
-  }
-}
-
-class UnitSwitchState extends State<UnitSwitch> {
-  bool _inCelsius;
-
-  @override
-  void initState() {
-    _inCelsius = widget.switchValue;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Switch(
-      value: _inCelsius,
-      onChanged: (bool value) {
-        setState(() {
-          _inCelsius = value;
-          widget.valueChanged(value);
-        });
-      },
     );
   }
 }

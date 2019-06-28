@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'ble.dart';
-import 'widgets.dart';
+import 'scan_page_widgets.dart';
 
 class ScanPage extends BTWidget {
   ScanPage(BTInfo btInfo) : super(btInfo);

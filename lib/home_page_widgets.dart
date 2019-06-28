@@ -1,0 +1,119 @@
+import 'package:flutter/material.dart';
+import 'package:myapp/scan_page.dart';
+import 'ble.dart';
+
+class InfoWidget extends StatelessWidget {
+  const InfoWidget(this.temp, this.hum, this.inCelsius, this.btInfo);
+  final double temp;
+  final bool inCelsius;
+  final int hum;
+  final BTInfo btInfo;
+
+  Widget _buildTemp() {
+    int roundedTemp;
+    if (inCelsius) {
+      roundedTemp = (temp ?? 0).round();
+    } else {
+      roundedTemp = ((temp ?? 0) * 9 / 5 + 32).round();
+    }
+    return Text(
+      '$roundedTemp\u00b0',
+      style: TextStyle(fontSize: 50),
+    );
+  }
+
+  Widget _buildHum() {
+    return Text(
+      '$hum%',
+      style: TextStyle(fontSize: 40),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: btInfo.isConnected
+          ? <Widget>[_buildTemp(), _buildHum()]
+          : <Widget>[
+              Text(
+                'Connect to a device to show data',
+                style: TextStyle(color: Colors.grey),
+              )
+            ],
+      mainAxisAlignment: MainAxisAlignment.center,
+    );
+  }
+}
+
+class DeviceInfoTile extends StatelessWidget {
+  const DeviceInfoTile(this.btInfo, this.bat);
+  final BTInfo btInfo;
+  final int bat;
+
+  Widget _buildTitle() {
+    return btInfo.isConnected
+        ? Column(
+            children: <Widget>[
+              Text('${btInfo.device.name}'),
+              Text(
+                '${'Battery: $bat%'}',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+          )
+        : Text('Not Connected');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(Icons.devices),
+      title: _buildTitle(),
+      trailing: RaisedButton(
+        child: Text('DEVICES'),
+        color: Colors.black,
+        textColor: Colors.white,
+        onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ScanPage(btInfo)),
+            ),
+      ),
+    );
+  }
+}
+
+class UnitSwitch extends StatefulWidget {
+  UnitSwitch({@required this.switchValue, @required this.valueChanged});
+  final bool switchValue;
+  final ValueChanged valueChanged;
+
+  @override
+  State<StatefulWidget> createState() {
+    return UnitSwitchState();
+  }
+}
+
+class UnitSwitchState extends State<UnitSwitch> {
+  bool _inCelsius;
+
+  @override
+  void initState() {
+    _inCelsius = widget.switchValue;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Switch(
+      value: _inCelsius,
+      onChanged: (bool value) {
+        setState(() {
+          _inCelsius = value;
+          widget.valueChanged(value);
+        });
+      },
+    );
+  }
+}
