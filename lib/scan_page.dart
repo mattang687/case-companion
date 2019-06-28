@@ -12,7 +12,6 @@ class ScanPage extends BTWidget {
 }
 
 class _ScanPageState extends BTWidgetState {
-
   Widget connectedDeviceWidget = Container();
 
   @override
@@ -25,28 +24,24 @@ class _ScanPageState extends BTWidgetState {
     List<Widget> widgetList = new List<Widget>();
     widgetList.add(connectedDeviceWidget);
     widgetList.addAll(btInfo.scanResults.values
-      .map((r) => ScanResultTile(
-        result: r,
-        onConnectTap: () {
-          stopScan();
-          disconnect(); 
-          connect(r.device);
-        },
-        onDisconnectTap: () => disconnect(),
-        btInfo: btInfo,
-      ))
-      .toList()
-    );
+        .map((r) => ScanResultTile(
+              result: r,
+              onConnectTap: () {
+                stopScan();
+                disconnect();
+                connect(r.device);
+              },
+              onDisconnectTap: () => disconnect(),
+              btInfo: btInfo,
+            ))
+        .toList());
     return widgetList;
   }
 
   void _buildConnectedDevice() {
     if (btInfo.isConnected) {
       connectedDeviceWidget = ConnectedDeviceTile(
-        onConnectTap: connect,
-        onDisconnectTap: disconnect,
-        btInfo: btInfo
-      );
+          onConnectTap: connect, onDisconnectTap: disconnect, btInfo: btInfo);
     } else {
       connectedDeviceWidget = Container();
     }
@@ -77,26 +72,33 @@ class _ScanPageState extends BTWidgetState {
             },
           ),
         ),
-        body: Stack(children: <Widget>[
-          RefreshIndicator(
-            child: btInfo.scanResults.length != 0 ? ListView(
-              physics: const AlwaysScrollableScrollPhysics(), 
-              children: _buildScanResultTiles()
-            ) : SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-                child: Container(
-                  child: Center(
-                    child: !btInfo.isScanning ? PullToScanWidget() : Container()
+        body: Stack(
+          children: <Widget>[
+            RefreshIndicator(
+              child: btInfo.scanResults.length != 0
+                  ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: _buildScanResultTiles(),
+                    )
+                  : SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        child: Center(
+                          child: !btInfo.isScanning
+                              ? PullToScanWidget()
+                              : Container(),
+                        ),
+                        height: MediaQuery.of(context).size.height -
+                            kToolbarHeight -
+                            MediaQuery.of(context).padding.top -
+                            MediaQuery.of(context).padding.bottom,
+                      ),
                     ),
-                  height: MediaQuery.of(context).size.height - kToolbarHeight 
-                    - MediaQuery.of(context).padding.top 
-                    - MediaQuery.of(context).padding.bottom
-                ),
+              onRefresh: _scan,
             ),
-            onRefresh: _scan,
+          ],
         ),
-        ],)
-      )
+      ),
     );
   }
 }

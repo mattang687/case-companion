@@ -5,12 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'widgets.dart';
-import 'scan_page.dart';
 import 'ble.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: "Case Companion", 
+    title: "Case Companion",
     home: HomePage(new BTInfo()),
   ));
 }
@@ -60,8 +59,8 @@ class _HomePageState extends BTWidgetState {
       try {
         return await btInfo.device.readCharacteristic(c);
       } on PlatformException {
-        return Future.delayed(Duration(milliseconds: 200), 
-          () async => await _repeatedRead(c));
+        return Future.delayed(
+            Duration(milliseconds: 200), () async => await _repeatedRead(c));
       }
     }
 
@@ -69,10 +68,10 @@ class _HomePageState extends BTWidgetState {
       // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
       // two bytes, most significant last, two's complement for negative numbers
       BluetoothCharacteristic cTemp = BluetoothCharacteristic(
-        descriptors: <BluetoothDescriptor>[], 
-        properties: null, 
-        serviceUuid: new Guid("0000181A-0000-1000-8000-00805F9B34FB"), 
-        uuid: new Guid("00002A6E-0000-1000-8000-00805F9B34FB")
+        descriptors: <BluetoothDescriptor>[],
+        properties: null,
+        serviceUuid: new Guid("0000181A-0000-1000-8000-00805F9B34FB"),
+        uuid: new Guid("00002A6E-0000-1000-8000-00805F9B34FB"),
       );
 
       List<int> ret = await _repeatedRead(cTemp);
@@ -86,16 +85,15 @@ class _HomePageState extends BTWidgetState {
       }
       return tgt;
     }
-    
 
     Future<int> _readHum() async {
       // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
       // two bytes, most significant last, unsigned
       BluetoothCharacteristic cHum = BluetoothCharacteristic(
-        descriptors: <BluetoothDescriptor>[], 
-        properties: null, 
-        serviceUuid: new Guid("0000181A-0000-1000-8000-00805F9B34FB"), 
-        uuid: new Guid("00002A6F-0000-1000-8000-00805F9B34FB")
+        descriptors: <BluetoothDescriptor>[],
+        properties: null,
+        serviceUuid: new Guid("0000181A-0000-1000-8000-00805F9B34FB"),
+        uuid: new Guid("00002A6F-0000-1000-8000-00805F9B34FB"),
       );
 
       List<int> ret = await _repeatedRead(cHum);
@@ -107,10 +105,10 @@ class _HomePageState extends BTWidgetState {
       // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
       // one byte, unsigned
       BluetoothCharacteristic cBat = BluetoothCharacteristic(
-        descriptors: <BluetoothDescriptor>[], 
-        properties: null, 
-        serviceUuid: new Guid("0000180F-0000-1000-8000-00805F9B34FB"), 
-        uuid: new Guid("00002A19-0000-1000-8000-00805F9B34FB")
+        descriptors: <BluetoothDescriptor>[],
+        properties: null,
+        serviceUuid: new Guid("0000180F-0000-1000-8000-00805F9B34FB"),
+        uuid: new Guid("00002A19-0000-1000-8000-00805F9B34FB"),
       );
 
       List<int> ret = await _repeatedRead(cBat);
@@ -122,7 +120,7 @@ class _HomePageState extends BTWidgetState {
       hum = await _readHum();
       bat = await _readBat();
     }
-    
+
     setState(() {});
     return;
   }
@@ -150,44 +148,48 @@ class _HomePageState extends BTWidgetState {
           child: Center(
             child: Container(
               child: InfoWidget(temp, hum, inCelsius, btInfo),
-              height: MediaQuery.of(context).size.height - kToolbarHeight 
-                - MediaQuery.of(context).padding.top 
-                - MediaQuery.of(context).padding.bottom
-            )
-          )
+              height: MediaQuery.of(context).size.height -
+                  kToolbarHeight -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom,
+            ),
+          ),
         ),
         onRefresh: _updateData,
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.keyboard_arrow_up),
         onPressed: () {
-          showModalBottomSheet<void>(context: context, builder: (BuildContext context) {
-            return Container(
-              height: 120,
-              child: Column(
-                children: <Widget>[
-                  DeviceInfoTile(btInfo, bat),
-                  ListTile(
-                    leading: Icon(Icons.wb_cloudy),
-                    title: Text('Celsius'),
-                    trailing: UnitSwitch(
-                      switchValue: inCelsius,
-                      valueChanged: (value) {
-                        _setUnitSetting(value);
-                      },
-                    )
-                  ),
-                ],
-              ),
-            );
-          });
-        }
-      )
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                height: 120,
+                child: Column(
+                  children: <Widget>[
+                    DeviceInfoTile(btInfo, bat),
+                    ListTile(
+                      leading: Icon(Icons.wb_cloudy),
+                      title: Text('Celsius'),
+                      trailing: UnitSwitch(
+                        switchValue: inCelsius,
+                        valueChanged: (value) {
+                          _setUnitSetting(value);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
 
-class UnitSwitch extends StatefulWidget{
+class UnitSwitch extends StatefulWidget {
   UnitSwitch({@required this.switchValue, @required this.valueChanged});
   final bool switchValue;
   final ValueChanged valueChanged;
@@ -213,8 +215,8 @@ class UnitSwitchState extends State<UnitSwitch> {
       value: _inCelsius,
       onChanged: (bool value) {
         setState(() {
-         _inCelsius = value;
-         widget.valueChanged(value); 
+          _inCelsius = value;
+          widget.valueChanged(value);
         });
       },
     );

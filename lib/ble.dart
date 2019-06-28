@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-class  BTInfo {
+class BTInfo {
   FlutterBlue flutterBlue;
 
   /// Scanning
@@ -99,12 +99,11 @@ abstract class BTWidgetState extends State<BTWidget> {
     btInfo.device = d;
     // Connect to device
     btInfo.deviceConnection = btInfo.flutterBlue
-      .connect(btInfo.device, timeout: const Duration(seconds: 4))
-      .listen(
-        null,
-        onDone: disconnect,
-      );
-    
+        .connect(btInfo.device, timeout: const Duration(seconds: 4))
+        .listen(
+          null,
+          onDone: disconnect,
+        );
 
     // Update the connection state immediately
     btInfo.device.state.then((s) {

@@ -3,8 +3,9 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:myapp/scan_page.dart';
 import 'ble.dart';
 
-class ConnectedDeviceTile extends StatefulWidget{
-  const ConnectedDeviceTile({this.onConnectTap, this.onDisconnectTap, this.btInfo});
+class ConnectedDeviceTile extends StatefulWidget {
+  const ConnectedDeviceTile(
+      {this.onConnectTap, this.onDisconnectTap, this.btInfo});
   final Function(BluetoothDevice d) onConnectTap;
   final VoidCallback onDisconnectTap;
   final BTInfo btInfo;
@@ -34,7 +35,7 @@ class ConnectedDeviceTileState extends State<ConnectedDeviceTile> {
           Text(
             cachedDevice.id.toString(),
             style: Theme.of(context).textTheme.caption,
-          )
+          ),
         ],
       );
     } else {
@@ -52,7 +53,7 @@ class ConnectedDeviceTileState extends State<ConnectedDeviceTile> {
           setState(() {
             widget.onDisconnectTap();
           });
-        }
+        },
       );
     } else {
       return RaisedButton(
@@ -63,23 +64,20 @@ class ConnectedDeviceTileState extends State<ConnectedDeviceTile> {
           setState(() {
             widget.onConnectTap(cachedDevice);
           });
-        }
+        },
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: _buildTitle(context),
-      trailing: _buildButton()
-    );
+    return ListTile(title: _buildTitle(context), trailing: _buildButton());
   }
-
 }
 
 class ScanResultTile extends StatefulWidget {
-  const ScanResultTile({this.result, this.onConnectTap, this.onDisconnectTap, this.btInfo});
+  const ScanResultTile(
+      {this.result, this.onConnectTap, this.onDisconnectTap, this.btInfo});
   final ScanResult result;
   final VoidCallback onConnectTap;
   final VoidCallback onDisconnectTap;
@@ -140,24 +138,23 @@ class ScanResultTileState extends State<ScanResultTile> {
         child: Text("DISCONNECT"),
         color: Colors.red,
         textColor: Colors.white,
-        onPressed: () => onDisconnectTap()
+        onPressed: () => onDisconnectTap(),
       );
     } else {
       return RaisedButton(
         child: Text('CONNECT'),
-        color: (result.advertisementData.connectable) ? Colors.black : Colors.grey,
+        color:
+            (result.advertisementData.connectable) ? Colors.black : Colors.grey,
         textColor: Colors.white,
-        onPressed: () => (result.advertisementData.connectable) ? onConnectTap() : null
+        onPressed: () =>
+            (result.advertisementData.connectable) ? onConnectTap() : null,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: _buildTitle(context),
-      trailing: _buildButton()
-    );
+    return ListTile(title: _buildTitle(context), trailing: _buildButton());
   }
 }
 
@@ -169,9 +166,17 @@ class PullToScanWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 5)),
-        Text('Pull to Scan', style: TextStyle(color: Colors.grey)),
-        Icon(Icons.keyboard_arrow_down, color: Colors.grey,)
+        Padding(
+          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 5),
+        ),
+        Text(
+          'Pull to Scan',
+          style: TextStyle(color: Colors.grey),
+        ),
+        Icon(
+          Icons.keyboard_arrow_down,
+          color: Colors.grey,
+        ),
       ],
     );
   }
@@ -191,26 +196,32 @@ class InfoWidget extends StatelessWidget {
     } else {
       roundedTemp = ((temp ?? 0) * 9 / 5 + 32).round();
     }
-    return Text('$roundedTemp\u00b0', style: TextStyle(fontSize: 50));
+    return Text(
+      '$roundedTemp\u00b0',
+      style: TextStyle(fontSize: 50),
+    );
   }
 
   Widget _buildHum() {
-    return Text('$hum%', style: TextStyle(fontSize: 40));
+    return Text(
+      '$hum%',
+      style: TextStyle(fontSize: 40),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: btInfo.isConnected? <Widget>[
-        _buildTemp(),
-        _buildHum()
-      ] : <Widget> [
-        Text(
-          'Connect to a device to show data', 
-          style: TextStyle(color: Colors.grey)
-        )
-      ],
-    mainAxisAlignment: MainAxisAlignment.center,);
+      children: btInfo.isConnected
+          ? <Widget>[_buildTemp(), _buildHum()]
+          : <Widget>[
+              Text(
+                'Connect to a device to show data',
+                style: TextStyle(color: Colors.grey),
+              )
+            ],
+      mainAxisAlignment: MainAxisAlignment.center,
+    );
   }
 }
 
@@ -220,18 +231,19 @@ class DeviceInfoTile extends StatelessWidget {
   final int bat;
 
   Widget _buildTitle() {
-    return btInfo.isConnected ? Column(
-      children: <Widget>[
-        Text('${btInfo.device.name}'),
-        Text('${'Battery: $bat%'}', 
-          style: TextStyle(
-              color: Colors.grey
-          ),
-        )
-      ],
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-    ) : Text('Not Connected');
+    return btInfo.isConnected
+        ? Column(
+            children: <Widget>[
+              Text('${btInfo.device.name}'),
+              Text(
+                '${'Battery: $bat%'}',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+          )
+        : Text('Not Connected');
   }
 
   @override
@@ -243,9 +255,10 @@ class DeviceInfoTile extends StatelessWidget {
         child: Text('DEVICES'),
         color: Colors.black,
         textColor: Colors.white,
-        onPressed: () => Navigator.push(context, MaterialPageRoute(
-          builder: (context) => ScanPage(btInfo))
-        )
+        onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ScanPage(btInfo)),
+            ),
       ),
     );
   }
