@@ -147,7 +147,7 @@ class _HomePageState extends BTWidgetState {
           physics: const AlwaysScrollableScrollPhysics(),
           child: Center(
             child: Container(
-              child: InfoWidget(temp, hum, inCelsius, btInfo),
+              child: DataWidget(temp, hum, inCelsius, btInfo),
               height: MediaQuery.of(context).size.height -
                   kToolbarHeight -
                   MediaQuery.of(context).padding.top -

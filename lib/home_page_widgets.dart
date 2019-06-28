@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:myapp/scan_page.dart';
 import 'ble.dart';
 
-class InfoWidget extends StatelessWidget {
-  const InfoWidget(this.temp, this.hum, this.inCelsius, this.btInfo);
+class DataWidget extends StatelessWidget {
+  const DataWidget(this.temp, this.hum, this.inCelsius, this.btInfo);
   final double temp;
   final bool inCelsius;
   final int hum;
