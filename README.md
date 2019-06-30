@@ -15,7 +15,7 @@ As a violist whose instrument has cracked in the dry cold of winter, I'm very fa
 ## How it Works
 ### Reading Data
 The app allows you to scan for and connect to nearby BLE devices. If you connect to a compatible device, it will allow you to read the sensor data from the device.\
-The ESP32 I'm using exposes a Battery service containing a Battery Level characteristic, and an Environmnetal Sensing service containing Temperature and Humidity characteristics. These services and characteristics use the 16-bit UUIDs defined by Bluetooth [here (services)](https://www.bluetooth.com/specifications/gatt/services/) and [here (characteristics)](https://www.bluetooth.com/specifications/gatt/characteristics/). Any BLE device with the same service/characteristic setup can be read by this app.\
+The ESP32 I'm using exposes a Battery service containing a Battery Level characteristic, and an Environmnetal Sensing service containing Temperature and Humidity characteristics. These [services](https://www.bluetooth.com/specifications/gatt/services/) and [characteristics](https://www.bluetooth.com/specifications/gatt/characteristics/) use the 16-bit UUIDs defined by Bluetooth. Any BLE device with the same service/characteristic setup can be read by this app.\
 I'm using the [flutter_blue](https://pub.dev/packages/flutter_blue) api to manage scanning for, connecting to, and reading from BLE devices.
 
 ### Storing and Graphing Data
