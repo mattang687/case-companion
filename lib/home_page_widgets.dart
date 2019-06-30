@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/scan_page.dart';
+
+import 'scan_page.dart';
 import 'ble.dart';
 
 class DataWidget extends StatelessWidget {
