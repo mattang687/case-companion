@@ -2,28 +2,28 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/services.dart';
+import 'package:myapp/inherited_bluetooth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 import 'home_page_widgets.dart';
-import 'ble.dart';
 
 void main() {
-  runApp(MaterialApp(
-    title: "Case Companion",
-    home: HomePage(new BTInfo()),
+  runApp(ChangeNotifierProvider<InheritedBluetooth> (
+    builder: (BuildContext context) => InheritedBluetooth(),
+    child: MaterialApp(
+      title: "Case Companion",
+      home: HomePage(),
+    ),
   ));
 }
 
-class HomePage extends BTWidget {
-  HomePage(BTInfo btInfo) : super(btInfo);
-
+class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new _HomePageState();
 }
 
-class _HomePageState extends BTWidgetState {
-  _HomePageState() : super();
-
+class _HomePageState extends State<HomePage> {
   bool inCelsius = true;
   double temp;
   int hum;
@@ -50,11 +50,10 @@ class _HomePageState extends BTWidgetState {
   @override
   initState() {
     super.initState();
-    _updateData();
     _getUnitSetting();
   }
 
-  Future<void> _updateData() async {
+  Future<void> _updateData(BTInfo btInfo) async {
     Future<List<int>> _repeatedRead(BluetoothCharacteristic c) async {
       try {
         return await btInfo.device.readCharacteristic(c);
@@ -127,17 +126,13 @@ class _HomePageState extends BTWidgetState {
 
   @override
   void dispose() {
-    btInfo.stateSubscription?.cancel();
-    btInfo.stateSubscription = null;
-    btInfo.scanSubscription?.cancel();
-    btInfo.scanSubscription = null;
-    btInfo.deviceConnection?.cancel();
-    btInfo.deviceConnection = null;
+    Provider.of<InheritedBluetooth>(context).btInfo.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
     return Scaffold(
       appBar: AppBar(
         title: Text("Case Companion"),
@@ -147,7 +142,7 @@ class _HomePageState extends BTWidgetState {
           physics: const AlwaysScrollableScrollPhysics(),
           child: Center(
             child: Container(
-              child: DataWidget(temp, hum, inCelsius, btInfo),
+              child: DataWidget(temp, hum, inCelsius),
               height: MediaQuery.of(context).size.height -
                   kToolbarHeight -
                   MediaQuery.of(context).padding.top -
@@ -155,7 +150,7 @@ class _HomePageState extends BTWidgetState {
             ),
           ),
         ),
-        onRefresh: _updateData,
+        onRefresh: () => _updateData(btInfo),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.keyboard_arrow_up),
@@ -167,7 +162,7 @@ class _HomePageState extends BTWidgetState {
                 height: 120,
                 child: Column(
                   children: <Widget>[
-                    DeviceInfoTile(btInfo, bat),
+                    DeviceInfoTile(bat),
                     ListTile(
                       leading: Icon(Icons.wb_cloudy),
                       title: Text('Celsius'),

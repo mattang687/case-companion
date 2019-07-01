@@ -1,58 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:provider/provider.dart';
 
-import 'ble.dart';
+import 'inherited_bluetooth.dart';
 
-class ConnectedDeviceTile extends StatefulWidget {
+class ConnectedDeviceTile extends StatelessWidget {
   const ConnectedDeviceTile(
-      {this.onConnectTap, this.onDisconnectTap, this.btInfo});
+      {this.onConnectTap, this.onDisconnectTap});
   final Function(BluetoothDevice d) onConnectTap;
   final VoidCallback onDisconnectTap;
-  final BTInfo btInfo;
 
-  @override
-  State<StatefulWidget> createState() {
-    return ConnectedDeviceTileState();
-  }
-}
-
-class ConnectedDeviceTileState extends State<ConnectedDeviceTile> {
-  BluetoothDevice cachedDevice;
-
-  @override
-  initState() {
-    super.initState();
-    cachedDevice = widget.btInfo.device;
-  }
-
-  Widget _buildTitle(BuildContext context) {
-    if (cachedDevice.name.length > 0) {
+  Widget _buildTitle(BuildContext context, BluetoothDevice device) {
+    if (device.name.length > 0) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(cachedDevice.name),
+          Text(device.name),
           Text(
-            cachedDevice.id.toString(),
+            device.id.toString(),
             style: Theme.of(context).textTheme.caption,
           ),
         ],
       );
     } else {
-      return Text(cachedDevice.id.toString());
+      return Text(device.id.toString());
     }
   }
 
-  Widget _buildButton() {
-    if (widget.btInfo.isConnected) {
+  Widget _buildButton(BTInfo btInfo) {
+    if (btInfo.isConnected) {
       return RaisedButton(
         child: Text("DISCONNECT"),
         color: Colors.red,
         textColor: Colors.white,
         onPressed: () {
-          setState(() {
-            widget.onDisconnectTap();
-          });
+          onDisconnectTap();
         },
       );
     } else {
@@ -61,9 +44,7 @@ class ConnectedDeviceTileState extends State<ConnectedDeviceTile> {
         color: Colors.black,
         textColor: Colors.white,
         onPressed: () {
-          setState(() {
-            widget.onConnectTap(cachedDevice);
-          });
+          onConnectTap(btInfo.device);
         },
       );
     }
@@ -71,48 +52,20 @@ class ConnectedDeviceTileState extends State<ConnectedDeviceTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(title: _buildTitle(context), trailing: _buildButton());
+    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
+    return ListTile(
+      title: _buildTitle(context, btInfo.previousDevice), 
+      trailing: _buildButton(btInfo),
+    );
   }
 }
 
-class ScanResultTile extends StatefulWidget {
+class ScanResultTile extends StatelessWidget {
   const ScanResultTile(
-      {this.result, this.onConnectTap, this.onDisconnectTap, this.btInfo});
+      {this.result, this.onConnectTap, this.onDisconnectTap});
   final ScanResult result;
   final VoidCallback onConnectTap;
   final VoidCallback onDisconnectTap;
-  final BTInfo btInfo;
-
-  @override
-  State<StatefulWidget> createState() => ScanResultTileState();
-}
-
-class ScanResultTileState extends State<ScanResultTile> {
-  ScanResult result;
-  VoidCallback onConnectTap;
-  VoidCallback onDisconnectTap;
-  BTInfo btInfo;
-
-  @override
-  void initState() {
-    super.initState();
-    btInfo = widget.btInfo;
-    result = widget.result;
-    onConnectTap = widget.onConnectTap;
-    onDisconnectTap = widget.onDisconnectTap;
-    // Immediately get the state of FlutterBlue
-    btInfo.flutterBlue.state.then((s) {
-      setState(() {
-        btInfo.state = s;
-      });
-    });
-    // Subscribe to state changes
-    btInfo.stateSubscription = btInfo.flutterBlue.onStateChanged().listen((s) {
-      setState(() {
-        btInfo.state = s;
-      });
-    });
-  }
 
   Widget _buildTitle(BuildContext context) {
     if (result.device.name.length > 0) {
@@ -132,7 +85,7 @@ class ScanResultTileState extends State<ScanResultTile> {
     }
   }
 
-  Widget _buildButton() {
+  Widget _buildButton(BTInfo btInfo) {
     if (btInfo.device != null && result.device.id == btInfo.device.id) {
       return RaisedButton(
         child: Text("DISCONNECT"),
@@ -154,7 +107,8 @@ class ScanResultTileState extends State<ScanResultTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(title: _buildTitle(context), trailing: _buildButton());
+    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
+    return ListTile(title: _buildTitle(context), trailing: _buildButton(btInfo));
   }
 }
 

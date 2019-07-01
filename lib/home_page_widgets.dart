@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'inherited_bluetooth.dart';
 import 'scan_page.dart';
-import 'ble.dart';
 
 class DataWidget extends StatelessWidget {
-  const DataWidget(this.temp, this.hum, this.inCelsius, this.btInfo);
+  const DataWidget(this.temp, this.hum, this.inCelsius);
   final double temp;
   final bool inCelsius;
   final int hum;
-  final BTInfo btInfo;
 
   Widget _buildTemp() {
     int roundedTemp;
@@ -32,6 +32,7 @@ class DataWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
     return Column(
       children: btInfo.isConnected
           ? <Widget>[_buildTemp(), _buildHum()]
@@ -47,11 +48,10 @@ class DataWidget extends StatelessWidget {
 }
 
 class DeviceInfoTile extends StatelessWidget {
-  const DeviceInfoTile(this.btInfo, this.bat);
-  final BTInfo btInfo;
+  const DeviceInfoTile(this.bat);
   final int bat;
 
-  Widget _buildTitle() {
+  Widget _buildTitle(BTInfo btInfo) {
     return btInfo.isConnected
         ? Column(
             children: <Widget>[
@@ -69,16 +69,17 @@ class DeviceInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
     return ListTile(
       leading: Icon(Icons.devices),
-      title: _buildTitle(),
+      title: _buildTitle(btInfo),
       trailing: RaisedButton(
         child: Text('DEVICES'),
         color: Colors.black,
         textColor: Colors.white,
         onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ScanPage(btInfo)),
+              MaterialPageRoute(builder: (context) => ScanPage()),
             ),
       ),
     );

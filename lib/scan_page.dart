@@ -1,57 +1,55 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'ble.dart';
+import 'inherited_bluetooth.dart';
 import 'scan_page_widgets.dart';
 
-class ScanPage extends BTWidget {
-  ScanPage(BTInfo btInfo) : super(btInfo);
+class ScanPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => new _ScanPageState();
 }
 
-class _ScanPageState extends BTWidgetState {
+class _ScanPageState extends State<ScanPage> {
   Widget connectedDeviceWidget = Container();
 
-  @override
-  initState() {
-    super.initState();
-    btInfo.scanResults = new Map();
-  }
-
   List<Widget> _buildScanResultTiles() {
+    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
     List<Widget> widgetList = new List<Widget>();
     widgetList.add(connectedDeviceWidget);
-    widgetList.addAll(btInfo.scanResults.values
+    widgetList.addAll(inheritedBluetooth.btInfo.scanResults.values
         .map((r) => ScanResultTile(
               result: r,
               onConnectTap: () {
-                stopScan();
-                disconnect();
-                connect(r.device);
+                inheritedBluetooth.stopScan();
+                inheritedBluetooth.disconnect();
+                inheritedBluetooth.connect(r.device);
               },
-              onDisconnectTap: () => disconnect(),
-              btInfo: btInfo,
+              onDisconnectTap: () => inheritedBluetooth.disconnect(),
             ))
         .toList());
     return widgetList;
   }
 
   void _buildConnectedDevice() {
-    if (btInfo.isConnected) {
+    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
+    if (inheritedBluetooth.btInfo.isConnected) {
       connectedDeviceWidget = ConnectedDeviceTile(
-          onConnectTap: connect, onDisconnectTap: disconnect, btInfo: btInfo);
+        onConnectTap: inheritedBluetooth.connect, 
+        onDisconnectTap: inheritedBluetooth.disconnect,
+      );
     } else {
       connectedDeviceWidget = Container();
     }
   }
 
+  // return true when done
   Future<bool> _scan() async {
-    // return true when done
+    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
     _buildConnectedDevice();
-    startScan();
-    while (btInfo.isScanning) {
+    inheritedBluetooth.startScan();
+    while (inheritedBluetooth.btInfo.isScanning) {
       await Future.delayed(Duration(milliseconds: 100));
     }
     return true;
@@ -59,15 +57,16 @@ class _ScanPageState extends BTWidgetState {
 
   @override
   Widget build(BuildContext context) {
+    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
     return WillPopScope(
-      onWillPop: stopScan,
+      onWillPop: inheritedBluetooth.stopScan,
       child: Scaffold(
         appBar: AppBar(
           title: Text("Connect to a device"),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              stopScan();
+              inheritedBluetooth.stopScan();
               Navigator.pop(context);
             },
           ),
@@ -75,7 +74,7 @@ class _ScanPageState extends BTWidgetState {
         body: Stack(
           children: <Widget>[
             RefreshIndicator(
-              child: btInfo.scanResults.length != 0
+              child: inheritedBluetooth.btInfo.scanResults.length != 0
                   ? ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: _buildScanResultTiles(),
@@ -84,7 +83,7 @@ class _ScanPageState extends BTWidgetState {
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: Container(
                         child: Center(
-                          child: !btInfo.isScanning
+                          child: !inheritedBluetooth.btInfo.isScanning
                               ? PullToScanWidget()
                               : Container(),
                         ),
