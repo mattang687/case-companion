@@ -4,7 +4,7 @@ This is the Flutter app for the Case Companion, an open-source instrument case m
 The ESP32 code, which only contains very basic functionality for now, can be found [here](https://github.com/mattang687/case-companion-esp.git).
 
 ## Introduction
-As a violist whose instrument has cracked in the dry cold of winter, I'm very familiar with the danger the weather poses to musical instruments. Many solutions exist to combat unfriendly weather, like Dampits, humidifiers, covers, and expensive cases, but there's very little useful evidence of their effectiveness, since everyone's setup is different. The Case Companion is my solution to this problem. It consists of this app and a [BLE-enabled ESP32](https://github.com/mattang687/case-companion-esp.git), and it allows musicians to record and view the temperature and humidity in their case over time. This project is still a work in progress, but it should be done by the end of the summer.
+Bad weather can be pretty dangerous to musical instruments (my viola cracked in the winter a few years ago). Many solutions exist to combat unfriendly weather, like Dampits, humidifiers, covers, and expensive cases, but there's very little useful evidence of their effectiveness, since everyone's setup is different. The Case Companion is my solution to this problem. It consists of this app and a [BLE-enabled ESP32](https://github.com/mattang687/case-companion-esp.git), and it allows musicians to record and view the temperature and humidity in their case over time. This project is still a work in progress, but it should be done by the end of the summer.
 
 ## Core Features
 - [x] Scan for and connect to nearby Bluetooth Low Energy (BLE) devices
