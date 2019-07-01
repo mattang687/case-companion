@@ -21,11 +21,7 @@ class _ScanPageState extends State<ScanPage> {
     widgetList.addAll(inheritedBluetooth.btInfo.scanResults.values
         .map((r) => ScanResultTile(
               result: r,
-              onConnectTap: () {
-                inheritedBluetooth.stopScan();
-                inheritedBluetooth.disconnect();
-                inheritedBluetooth.connect(r.device);
-              },
+              onConnectTap: () => inheritedBluetooth.connect(r.device),
               onDisconnectTap: () => inheritedBluetooth.disconnect(),
             ))
         .toList());

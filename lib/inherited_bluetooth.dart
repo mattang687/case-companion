@@ -31,6 +31,8 @@ class InheritedBluetooth with ChangeNotifier {
   }
 
   connect(BluetoothDevice d) async {
+    stopScan();
+    disconnect();
     btInfo.device = d;
     btInfo.previousDevice = d;
     // Connect to device

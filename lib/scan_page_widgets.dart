@@ -28,7 +28,7 @@ class ConnectedDeviceTile extends StatelessWidget {
     }
   }
 
-  Widget _buildButton(BTInfo btInfo) {
+  Widget _buildButton(BTInfo btInfo, BluetoothDevice device) {
     if (btInfo.isConnected) {
       return RaisedButton(
         child: Text("DISCONNECT"),
@@ -44,7 +44,7 @@ class ConnectedDeviceTile extends StatelessWidget {
         color: Colors.black,
         textColor: Colors.white,
         onPressed: () {
-          onConnectTap(btInfo.device);
+          onConnectTap(device);
         },
       );
     }
@@ -55,7 +55,7 @@ class ConnectedDeviceTile extends StatelessWidget {
     final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
     return ListTile(
       title: _buildTitle(context, btInfo.previousDevice), 
-      trailing: _buildButton(btInfo),
+      trailing: _buildButton(btInfo, btInfo.previousDevice),
     );
   }
 }
