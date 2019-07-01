@@ -8,8 +8,8 @@ class Entry {
 
   static final columns = ["id", "time", "temp", "hum"];
 
-  Map toMap() {
-    Map map = {
+  Map<String, dynamic> toMap() {
+    Map<String,dynamic> map = {
       "time": time,
       "temp": temp,
       "hum": hum

@@ -31,6 +31,7 @@ class DatabaseHelper {
   // open database or create if it doesn't exist
   _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    if (documentsDirectory == null) print("DOC DIR NULL");
     String path = join(documentsDirectory.path, _databaseName);
     return await openDatabase(path,
       version: _databaseVersion,
@@ -43,9 +44,9 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE $table (
         $columnId INTEGER PRIMARY KEY,
-        $columnTime INTEGER NOT NULL UNIQUE
+        $columnTime INTEGER NOT NULL UNIQUE,
         $columnTemp INTEGER NOT NULL,
-        $columnHum INTEGER NOT NULL,
+        $columnHum INTEGER NOT NULL
       )
     ''');
   }
@@ -80,5 +81,10 @@ class DatabaseHelper {
   Future<int> deleteLast() async {
     Database db = await instance.database;
     return await db.rawDelete('DELETE FROM $table WHERE $columnTime = (SELECT MAX($columnTime) FROM $table)');
+  }
+
+  clear() async {
+    Database db = await instance.database;
+    db.delete(table);
   }
 }
