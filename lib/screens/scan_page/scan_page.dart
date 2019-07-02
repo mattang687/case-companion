@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:myapp/bluetooth/inherited_bluetooth.dart';
 import 'package:provider/provider.dart';
 
-import 'inherited_bluetooth.dart';
 import 'scan_page_widgets.dart';
 
 class ScanPage extends StatefulWidget {
@@ -40,15 +40,15 @@ class _ScanPageState extends State<ScanPage> {
     }
   }
 
-  // return true when done
-  Future<bool> _scan() async {
+  // return when done
+  Future<void> _scan() async {
     final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
     _buildConnectedDevice();
     inheritedBluetooth.startScan();
     while (inheritedBluetooth.btInfo.isScanning) {
       await Future.delayed(Duration(milliseconds: 100));
     }
-    return true;
+    return;
   }
 
   @override

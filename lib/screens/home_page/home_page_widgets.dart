@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/bluetooth/bluetooth_info.dart';
+import 'package:myapp/bluetooth/inherited_bluetooth.dart';
+import 'package:myapp/screens/scan_page/scan_page.dart';
 import 'package:provider/provider.dart';
-
-import 'inherited_bluetooth.dart';
-import 'scan_page.dart';
 
 class DataWidget extends StatelessWidget {
   const DataWidget(this.temp, this.hum, this.inCelsius);

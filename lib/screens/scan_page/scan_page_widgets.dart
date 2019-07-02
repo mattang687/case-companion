@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:myapp/bluetooth/bluetooth_info.dart';
+import 'package:myapp/bluetooth/inherited_bluetooth.dart';
 import 'package:provider/provider.dart';
 
-import 'inherited_bluetooth.dart';
 
 class ConnectedDeviceTile extends StatelessWidget {
   const ConnectedDeviceTile(

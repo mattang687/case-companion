@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:myapp/database_entry.dart';
-import 'package:myapp/database_helper.dart';
+import 'package:myapp/local_data/database_entry.dart';
+import 'package:myapp/local_data/database_helper.dart';
 
 // to be run through an emulator/device with "flutter run test/database_test.dart"
 void main() {

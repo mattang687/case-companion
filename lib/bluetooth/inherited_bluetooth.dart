@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter/services.dart';
+
+import 'bluetooth_info.dart';
 
 class InheritedBluetooth with ChangeNotifier {
   final BTInfo btInfo = new BTInfo();
@@ -85,44 +88,73 @@ class InheritedBluetooth with ChangeNotifier {
     btInfo.deviceConnection = null;
     super.dispose();
   }
-}
 
-class BTInfo {
-  FlutterBlue flutterBlue;
-
-  /// Scanning
-  StreamSubscription scanSubscription;
-  Map<DeviceIdentifier, ScanResult> scanResults;
-  bool isScanning;
-
-  /// State
-  StreamSubscription stateSubscription;
-  BluetoothState state;
-
-  /// Device
-  BluetoothDevice device;
-  BluetoothDevice previousDevice;
-  bool get isConnected => (device != null);
-  StreamSubscription deviceConnection;
-  StreamSubscription deviceStateSubscription;
-  List<BluetoothService> services;
-  Map<Guid, StreamSubscription> valueChangedSubscriptions;
-  BluetoothDeviceState deviceState;
-
-  BTInfo() {
-    flutterBlue = FlutterBlue.instance;
-    scanResults = new Map();
-    isScanning = false;
-    state = BluetoothState.unknown;
-    services = new List();
-    valueChangedSubscriptions = {};
-    deviceState = BluetoothDeviceState.disconnected;
+  Future<List<int>> _repeatedRead(BluetoothCharacteristic c) async {
+    try {
+      return await btInfo.device.readCharacteristic(c);
+    } on PlatformException {
+      return Future.delayed(
+          Duration(milliseconds: 200), () async => await _repeatedRead(c));
+    }
   }
 
-  dispose() {
-    scanSubscription.cancel();
-    stateSubscription.cancel();
-    deviceConnection.cancel();
-    deviceStateSubscription.cancel();
+  Future<double> readTemp() async {
+    if (!btInfo.isConnected) {
+      return 0;
+    }
+    // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
+    // two bytes, most significant last, two's complement for negative numbers
+    BluetoothCharacteristic cTemp = BluetoothCharacteristic(
+      descriptors: <BluetoothDescriptor>[],
+      properties: null,
+      serviceUuid: new Guid("0000181A-0000-1000-8000-00805F9B34FB"),
+      uuid: new Guid("00002A6E-0000-1000-8000-00805F9B34FB"),
+    );
+
+    List<int> ret = await _repeatedRead(cTemp);
+    double tgt;
+    int sum = ret[1] * 256 + ret[0];
+    if (ret[1] > 127) {
+      // negative, find two's complement
+      tgt = -(65536 - sum) / 100;
+    } else {
+      tgt = sum / 100;
+    }
+    return tgt;
+  }
+
+  Future<int> readHum() async {
+    if (!btInfo.isConnected) {
+      return 0;
+    }
+    // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
+    // two bytes, most significant last, unsigned
+    BluetoothCharacteristic cHum = BluetoothCharacteristic(
+      descriptors: <BluetoothDescriptor>[],
+      properties: null,
+      serviceUuid: new Guid("0000181A-0000-1000-8000-00805F9B34FB"),
+      uuid: new Guid("00002A6F-0000-1000-8000-00805F9B34FB"),
+    );
+
+    List<int> ret = await _repeatedRead(cHum);
+    int sum = ret[1] * 256 + ret[0];
+    return sum ~/ 100;
+  }
+
+  Future<int> readBat() async {
+    if (!btInfo.isConnected) {
+      return 0;
+    }
+    // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
+    // one byte, unsigned
+    BluetoothCharacteristic cBat = BluetoothCharacteristic(
+      descriptors: <BluetoothDescriptor>[],
+      properties: null,
+      serviceUuid: new Guid("0000180F-0000-1000-8000-00805F9B34FB"),
+      uuid: new Guid("00002A19-0000-1000-8000-00805F9B34FB"),
+    );
+
+    List<int> ret = await _repeatedRead(cBat);
+    return ret[0];
   }
 }
