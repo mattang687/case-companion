@@ -53,7 +53,11 @@ class DatabaseHelper {
 
   Future<int> insert(Entry e) async {
     Database db = await instance.database;
-    return await db.insert(table, e.toMap());
+    try {
+      return await db.insert(table, e.toMap());
+    } catch(e) {
+      return null;
+    }
   }
 
   Future<List<Entry>> queryAllRows() async {

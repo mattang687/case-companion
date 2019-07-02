@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/screens/home_page/graph_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
 
 import 'home_page_widgets.dart';
+import 'chart_helper.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -73,10 +73,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: <Widget>[
                   DataWidget(temp, hum, inCelsius),
-                  SizedBox(
-                    child:TempHumChart.withSampleData(),
-                    height: MediaQuery.of(context).size.height / 2,
-                  ),
+                  ChartWidget()
                 ],
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
