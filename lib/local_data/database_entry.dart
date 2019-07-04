@@ -3,7 +3,7 @@ class Entry {
 
   int id;
   int time;
-  int temp;
+  num temp;
   int hum;
 
   static final columns = ["id", "time", "temp", "hum"];

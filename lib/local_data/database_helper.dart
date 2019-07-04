@@ -45,7 +45,7 @@ class DatabaseHelper {
       CREATE TABLE $table (
         $columnId INTEGER PRIMARY KEY,
         $columnTime INTEGER NOT NULL UNIQUE,
-        $columnTemp INTEGER NOT NULL,
+        $columnTemp REAL NOT NULL,
         $columnHum INTEGER NOT NULL
       )
     ''');
@@ -82,9 +82,9 @@ class DatabaseHelper {
   }
 
   // delete the oldest entry
-  Future<int> deleteLast() async {
+  Future<int> deleteOldest() async {
     Database db = await instance.database;
-    return await db.rawDelete('DELETE FROM $table WHERE $columnTime = (SELECT MAX($columnTime) FROM $table)');
+    return await db.rawDelete('DELETE FROM $table WHERE $columnTime = (SELECT MIN($columnTime) FROM $table)');
   }
 
   clear() async {

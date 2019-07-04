@@ -6,7 +6,11 @@ import 'package:myapp/local_data/database_helper.dart';
 import 'package:myapp/screens/home_page/chart_widgets.dart';
 
 class ChartWidget extends StatefulWidget {
+  ChartWidget(this.inCelsius);
+  final bool inCelsius;
+
   final Random rand = Random(123);
+
   @override
   State<StatefulWidget> createState() {
     return ChartWidgetState();
@@ -43,6 +47,13 @@ class ChartWidgetState extends State<ChartWidget> {
     return;
   }
 
+  Future<void> _deleteOldest() async {
+    DatabaseHelper db = DatabaseHelper.instance;
+    await db.deleteOldest();
+    await _updateData();
+    return;
+  }
+
   @override
   void initState() {
     _updateData();
@@ -55,7 +66,7 @@ class ChartWidgetState extends State<ChartWidget> {
       children: <Widget>[
         SizedBox(
           height: MediaQuery.of(context).size.height / 2,
-          child: TempHumChart(data),
+          child: TempHumChart(data, widget.inCelsius),
         ),
         Row(
           children: <Widget>[
@@ -69,6 +80,13 @@ class ChartWidgetState extends State<ChartWidget> {
             RaisedButton(
               child: Text('CLEAR'),
               onPressed: _clearData,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+            ),
+            RaisedButton(
+              child: Text('DELETE LAST'),
+              onPressed: _deleteOldest,
             ),
           ],
           mainAxisAlignment: MainAxisAlignment.center,

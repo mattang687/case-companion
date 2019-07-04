@@ -3,17 +3,24 @@ import 'package:flutter/widgets.dart';
 import 'package:myapp/local_data/database_entry.dart';
 
 class TempHumChart extends StatelessWidget {
+  TempHumChart(this.entryData, this.inCelsius);
+  final bool inCelsius;
+
   final List<Entry> entryData;
 
-  TempHumChart(this.entryData);
-
-  static List<charts.Series<Entry, DateTime>> _parseEntries(List<Entry> data) {
+  List<charts.Series<Entry, DateTime>> _parseEntries(List<Entry> data) {
     return  [
       new charts.Series<Entry, DateTime>(
         id: 'Temperature',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
         domainFn: (Entry e, _) => new DateTime.fromMillisecondsSinceEpoch(e.time * 1000),
-        measureFn:  (Entry e, _) => e.temp,
+        measureFn:  (Entry e, _) {
+          if (inCelsius) {
+            return e.temp;
+          } else {
+            return e.temp * 9 / 5 + 32;
+          }
+        },
         data: data,
       ),
       new charts.Series<Entry, DateTime>(

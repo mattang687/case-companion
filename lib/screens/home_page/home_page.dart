@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/local_data/database_entry.dart';
+import 'package:myapp/local_data/database_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
@@ -53,6 +55,19 @@ class _HomePageState extends State<HomePage> {
     return;
   }
 
+  Future<void> _saveData() async {
+    InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
+    if (!inheritedBluetooth.btInfo.isConnected) return;
+    DatabaseHelper db = DatabaseHelper.instance;
+    Entry e = new Entry(
+      time: (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round(),
+      temp: temp,
+      hum: hum,
+    );
+    await db.insert(e);
+    return;
+  }
+
   @override
   void dispose() {
     Provider.of<InheritedBluetooth>(context).btInfo.dispose();
@@ -73,7 +88,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: <Widget>[
                   DataWidget(temp, hum, inCelsius),
-                  ChartWidget()
+                  ChartWidget(inCelsius),
                 ],
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
@@ -84,7 +99,10 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        onRefresh: () => _updateData(),
+        onRefresh: () async {
+          await _updateData();
+          _saveData();
+        },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.keyboard_arrow_up),
