@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:myapp/local_data/database_entry.dart';
-import 'package:myapp/local_data/database_helper.dart';
+import 'package:myapp/local_data/database_utils.dart';
 
 // to be run through an emulator/device with "flutter run test/database_test.dart"
 void main() {
   test('Insert single, query row count', () async {
-    final DatabaseHelper db = DatabaseHelper.instance;
+    final DatabaseUtils db = DatabaseUtils.instance;
     db.clear();
 
     Entry e = new Entry(
@@ -19,7 +19,7 @@ void main() {
   });
 
   test('Insert single, delete oldest', () async {
-    final DatabaseHelper db = DatabaseHelper.instance;
+    final DatabaseUtils db = DatabaseUtils.instance;
     db.clear();
 
     Entry e = new Entry(
@@ -34,7 +34,7 @@ void main() {
   });
 
   test('Insert single, query all rows', () async {
-    final DatabaseHelper db = DatabaseHelper.instance;
+    final DatabaseUtils db = DatabaseUtils.instance;
     db.clear();
 
     Entry e = new Entry(
@@ -54,7 +54,7 @@ void main() {
   });
 
   test('Insert multiple, query row count', () async {
-    final DatabaseHelper db = DatabaseHelper.instance;
+    final DatabaseUtils db = DatabaseUtils.instance;
     db.clear();
 
     Entry e1 = new Entry(
@@ -82,7 +82,7 @@ void main() {
   });
 
   test('Insert multiple, delete oldest', () async {
-    final DatabaseHelper db = DatabaseHelper.instance;
+    final DatabaseUtils db = DatabaseUtils.instance;
     db.clear();
 
     Entry e1 = new Entry(
@@ -126,7 +126,7 @@ void main() {
   });
   
   test('Insert double, query all rows', () async {
-    final DatabaseHelper db = DatabaseHelper.instance;
+    final DatabaseUtils db = DatabaseUtils.instance;
     db.clear();
 
     Entry e = new Entry(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/local_data/database_helper.dart';
 import 'package:provider/provider.dart';
 
 import 'bluetooth/inherited_bluetooth.dart';
@@ -9,7 +10,10 @@ void main() {
     builder: (BuildContext context) => InheritedBluetooth(),
     child: MaterialApp(
       title: "Case Companion",
-      home: HomePage(),
-    ),
+      home: ChangeNotifierProvider<DatabaseHelper> (
+        builder: (_) => DatabaseHelper(),
+        child: HomePage(),
+      ),
+  ),
   ));
 }
