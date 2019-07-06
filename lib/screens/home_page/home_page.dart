@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/local_data/database_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
@@ -41,12 +42,20 @@ class _HomePageState extends State<HomePage> {
     _getUnitSetting();
   }
 
+  // read data and save to SQLite databse, if connected
   Future<void> _updateData() async {
-    InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
+    InheritedBluetooth inheritedBluetooth =
+        Provider.of<InheritedBluetooth>(context);
     if (inheritedBluetooth.btInfo.isConnected) {
       temp = await inheritedBluetooth.readTemp();
       hum = await inheritedBluetooth.readHum();
       bat = await inheritedBluetooth.readBat();
+
+      DatabaseHelper db = Provider.of<DatabaseHelper>(context);
+      db.save(
+        temp: temp.round(),
+        hum: hum,
+      );
     }
 
     setState(() {});
@@ -64,29 +73,27 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Case Companion"),
-      ),
-      body: RefreshIndicator(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Center(
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  DataWidget(temp, hum, inCelsius),
-                  ChartWidget(inCelsius),
-                ],
-                mainAxisAlignment: MainAxisAlignment.center,
-              ),
-              height: MediaQuery.of(context).size.height -
-                  kToolbarHeight -
-                  MediaQuery.of(context).padding.top -
-                  MediaQuery.of(context).padding.bottom,
-            ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () async => _updateData(),
           ),
+        ],
+      ),
+      body: Center(
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              DataWidget(temp, hum, inCelsius),
+              ChartWidget(inCelsius),
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+          ),
+          height: MediaQuery.of(context).size.height -
+              kToolbarHeight -
+              MediaQuery.of(context).padding.top -
+              MediaQuery.of(context).padding.bottom,
         ),
-        onRefresh: () async {
-          await _updateData();
-        },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.keyboard_arrow_up),
