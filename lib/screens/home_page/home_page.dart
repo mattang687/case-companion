@@ -62,6 +62,56 @@ class _HomePageState extends State<HomePage> {
     return;
   }
 
+  void _showDatePicker() async {
+    DateTime now = DateTime.now();
+    DateTime nowRoundDown = DateTime.utc(now.year, now.month, now.day);
+    DateTime selectedDate = await showDatePicker(
+      context: context,
+      initialDate: nowRoundDown,
+      firstDate: DateTime(2000),
+      lastDate: nowRoundDown,
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.light(),
+          child: child,
+        );
+      },
+    );
+    if (selectedDate != null) {
+      print(selectedDate.toString());
+      DatabaseHelper db = Provider.of<DatabaseHelper>(context);
+      db.deleteBefore(selectedDate);
+    }
+  }
+
+  // confirmation dialog to clear data
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Clear data?'),
+          content: Text('This will delete all saved data.'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('CANCEL'),
+              onPressed: Navigator.of(context).pop,
+            ),
+            FlatButton(
+              child: Text('CONFIRM'),
+              onPressed: _clear,
+            )
+          ],
+        );
+      }
+    );
+  }
+
+  void _clear() {
+    Provider.of<DatabaseHelper>(context).clearData();
+    Navigator.of(context).pop();
+  }
+
   @override
   void dispose() {
     Provider.of<InheritedBluetooth>(context).btInfo.dispose();
@@ -73,12 +123,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Case Companion"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () async => _updateData(),
-          ),
-        ],
       ),
       body: Center(
         child: Container(
@@ -102,10 +146,40 @@ class _HomePageState extends State<HomePage> {
             context: context,
             builder: (BuildContext context) {
               return Container(
-                height: 120,
+                height: 300,
                 child: Column(
                   children: <Widget>[
                     DeviceInfoTile(bat),
+                    ListTile(
+                      leading: Icon(Icons.refresh),
+                      title: Text('Refresh Data'),
+                      trailing: RaisedButton(
+                        child: Text('REFRESH'),
+                        textColor: Colors.white,
+                        color: Colors.black,
+                        onPressed: _updateData,
+                      )
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.clear),
+                      title: Text('Clear Before'),
+                      trailing: RaisedButton(
+                        child: Text('PICK'),
+                        textColor: Colors.white,
+                        color: Colors.black,
+                        onPressed: _showDatePicker,
+                      )
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.clear_all),
+                      title: Text('Clear All'),
+                      trailing: RaisedButton(
+                        child: Text('CLEAR'),
+                        textColor: Colors.white,
+                        color: Colors.red,
+                        onPressed: _showDialog,
+                      )
+                    ),
                     ListTile(
                       leading: Icon(Icons.wb_cloudy),
                       title: Text('Celsius'),

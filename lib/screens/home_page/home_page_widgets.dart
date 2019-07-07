@@ -47,17 +47,25 @@ class DataWidget extends StatelessWidget {
   }
 }
 
-class DeviceInfoTile extends StatelessWidget {
+// Displays currently connected device and its battery level
+class DeviceInfoTile extends StatefulWidget {
   const DeviceInfoTile(this.bat);
   final int bat;
 
+  @override
+  State<StatefulWidget> createState() {
+    return DeviceInfoTileState();
+  }
+}
+
+class DeviceInfoTileState extends State<DeviceInfoTile> {
   Widget _buildTitle(BTInfo btInfo) {
     return btInfo.isConnected
         ? Column(
             children: <Widget>[
               Text('${btInfo.device.name}'),
               Text(
-                '${'Battery: $bat%'}',
+                '${'Battery: ${widget.bat}%'}',
                 style: TextStyle(color: Colors.grey),
               ),
             ],
