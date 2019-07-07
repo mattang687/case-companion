@@ -8,6 +8,9 @@ import 'bluetooth_info.dart';
 
 class InheritedBluetooth with ChangeNotifier {
   final BTInfo btInfo = new BTInfo();
+  double temp;
+  int hum;
+  int bat;
 
   startScan() {
     btInfo.scanResults = new Map();
@@ -98,9 +101,11 @@ class InheritedBluetooth with ChangeNotifier {
     }
   }
 
-  Future<double> readTemp() async {
+  Future<void> readTemp() async {
     if (!btInfo.isConnected) {
-      return 0;
+      temp = 0;
+      notifyListeners();
+      return;
     }
     // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
     // two bytes, most significant last, two's complement for negative numbers
@@ -120,12 +125,16 @@ class InheritedBluetooth with ChangeNotifier {
     } else {
       tgt = sum / 100;
     }
-    return tgt;
+    temp = tgt;
+    notifyListeners();
+    return;
   }
 
-  Future<int> readHum() async {
+  Future<void> readHum() async {
     if (!btInfo.isConnected) {
-      return 0;
+      hum = 0;
+      notifyListeners();
+      return;
     }
     // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
     // two bytes, most significant last, unsigned
@@ -138,12 +147,16 @@ class InheritedBluetooth with ChangeNotifier {
 
     List<int> ret = await _repeatedRead(cHum);
     int sum = ret[1] * 256 + ret[0];
-    return sum ~/ 100;
+    hum = sum ~/ 100;
+    notifyListeners();
+    return;
   }
 
-  Future<int> readBat() async {
+  Future<void> readBat() async {
     if (!btInfo.isConnected) {
-      return 0;
+      bat = 0;
+      notifyListeners();
+      return;
     }
     // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
     // one byte, unsigned
@@ -155,6 +168,8 @@ class InheritedBluetooth with ChangeNotifier {
     );
 
     List<int> ret = await _repeatedRead(cBat);
-    return ret[0];
+    bat = ret[0];
+    notifyListeners();
+    return;
   }
 }

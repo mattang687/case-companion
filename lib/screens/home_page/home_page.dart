@@ -14,9 +14,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool inCelsius = true;
-  double temp;
-  int hum;
-  int bat;
 
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
@@ -47,14 +44,14 @@ class _HomePageState extends State<HomePage> {
     InheritedBluetooth inheritedBluetooth =
         Provider.of<InheritedBluetooth>(context);
     if (inheritedBluetooth.btInfo.isConnected) {
-      temp = await inheritedBluetooth.readTemp();
-      hum = await inheritedBluetooth.readHum();
-      bat = await inheritedBluetooth.readBat();
+      await inheritedBluetooth.readTemp();
+      await inheritedBluetooth.readHum();
+      await inheritedBluetooth.readBat();
 
       DatabaseHelper db = Provider.of<DatabaseHelper>(context);
       db.save(
-        temp: temp.round(),
-        hum: hum,
+        temp: inheritedBluetooth.temp.round(),
+        hum: inheritedBluetooth.hum,
       );
     }
 
@@ -128,7 +125,7 @@ class _HomePageState extends State<HomePage> {
         child: Container(
           child: Column(
             children: <Widget>[
-              DataWidget(temp, hum, inCelsius),
+              DataWidget(inCelsius),
               ChartWidget(inCelsius),
             ],
             mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                 height: 300,
                 child: Column(
                   children: <Widget>[
-                    DeviceInfoTile(bat),
+                    DeviceInfoTile(),
                     ListTile(
                       leading: Icon(Icons.refresh),
                       title: Text('Refresh Data'),

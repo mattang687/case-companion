@@ -5,17 +5,15 @@ import 'package:myapp/screens/scan_page/scan_page.dart';
 import 'package:provider/provider.dart';
 
 class DataWidget extends StatelessWidget {
-  const DataWidget(this.temp, this.hum, this.inCelsius);
-  final double temp;
+  const DataWidget(this.inCelsius);
   final bool inCelsius;
-  final int hum;
 
-  Widget _buildTemp() {
+  Widget _buildTemp(InheritedBluetooth inheritedBluetooth) {
     int roundedTemp;
     if (inCelsius) {
-      roundedTemp = (temp ?? 0).round();
+      roundedTemp = (inheritedBluetooth.temp ?? 0).round();
     } else {
-      roundedTemp = ((temp ?? 0) * 9 / 5 + 32).round();
+      roundedTemp = ((inheritedBluetooth.temp ?? 0) * 9 / 5 + 32).round();
     }
     return Text(
       '$roundedTemp\u00b0',
@@ -23,19 +21,19 @@ class DataWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildHum() {
+  Widget _buildHum(InheritedBluetooth inheritedBluetooth) {
     return Text(
-      '$hum%',
+      '${inheritedBluetooth.hum}%',
       style: TextStyle(fontSize: 40),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
+    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
     return Column(
-      children: btInfo.isConnected
-          ? <Widget>[_buildTemp(), _buildHum()]
+      children: inheritedBluetooth.btInfo.isConnected
+          ? <Widget>[_buildTemp(inheritedBluetooth), _buildHum(inheritedBluetooth)]
           : <Widget>[
               Text(
                 'Connect to a device to show data',
@@ -49,9 +47,6 @@ class DataWidget extends StatelessWidget {
 
 // Displays currently connected device and its battery level
 class DeviceInfoTile extends StatefulWidget {
-  const DeviceInfoTile(this.bat);
-  final int bat;
-
   @override
   State<StatefulWidget> createState() {
     return DeviceInfoTileState();
@@ -59,13 +54,13 @@ class DeviceInfoTile extends StatefulWidget {
 }
 
 class DeviceInfoTileState extends State<DeviceInfoTile> {
-  Widget _buildTitle(BTInfo btInfo) {
-    return btInfo.isConnected
+  Widget _buildTitle(InheritedBluetooth inheritedBluetooth) {
+    return inheritedBluetooth.btInfo.isConnected
         ? Column(
             children: <Widget>[
-              Text('${btInfo.device.name}'),
+              Text('${inheritedBluetooth.btInfo.device.name}'),
               Text(
-                '${'Battery: ${widget.bat}%'}',
+                '${'Battery: ${inheritedBluetooth.bat}%'}',
                 style: TextStyle(color: Colors.grey),
               ),
             ],
@@ -77,10 +72,10 @@ class DeviceInfoTileState extends State<DeviceInfoTile> {
 
   @override
   Widget build(BuildContext context) {
-    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
+    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
     return ListTile(
       leading: Icon(Icons.devices),
-      title: _buildTitle(btInfo),
+      title: _buildTitle(inheritedBluetooth),
       trailing: RaisedButton(
         child: Text('DEVICES'),
         color: Colors.black,
