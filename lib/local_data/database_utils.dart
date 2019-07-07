@@ -87,6 +87,12 @@ class DatabaseUtils {
     return await db.rawDelete('DELETE FROM $table WHERE $columnTime = (SELECT MIN($columnTime) FROM $table)');
   }
 
+  Future<int> deleteBefore(DateTime dateTime) async {
+    Database db = await instance.database;
+    int unixTime = dateTime.millisecondsSinceEpoch ~/ 1000;
+    return await db.delete(table, where: '$columnTime < ?', whereArgs: [unixTime]);
+  }
+
   clear() async {
     Database db = await instance.database;
     db.delete(table);

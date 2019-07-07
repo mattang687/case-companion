@@ -43,4 +43,11 @@ class DatabaseHelper with ChangeNotifier {
     await updateData();
     return;
   }
+
+  Future<void> deleteBefore(DateTime dateTime) async {
+    DatabaseUtils db = DatabaseUtils.instance;
+    await db.deleteBefore(dateTime);
+    await updateData();
+    return;
+  }
 }
