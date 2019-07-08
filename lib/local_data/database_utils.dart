@@ -66,7 +66,27 @@ class DatabaseUtils {
   Future<List<Entry>> queryAllRows() async {
     Database db = await instance.database;
     List<Entry> ret = new List<Entry>();
-    List<Map<String, dynamic>> list = await db.query(table);
+    List<Map<String, dynamic>> list =
+        await db.query(table, orderBy: '$columnTime ASC');
+    list.forEach((map) {
+      ret.add(Entry.fromMap(map));
+    });
+
+    return ret;
+  }
+
+  // query entries within time range
+  Future<List<Entry>> queryInRange(DateTime start, DateTime end) async {
+    Database db = await instance.database;
+    int unixTimeStart = start.millisecondsSinceEpoch ~/ 1000;
+    int unixTimeEnd = end.millisecondsSinceEpoch ~/ 1000;
+    List<Entry> ret = new List<Entry>();
+    List<Map<String, dynamic>> list = await db.query(
+      table,
+      where: '$columnTime > ? AND $columnTime < ?',
+      whereArgs: [unixTimeStart, unixTimeEnd],
+      orderBy: '$columnTime ASC',
+    );
     list.forEach((map) {
       ret.add(Entry.fromMap(map));
     });
