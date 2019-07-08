@@ -4,32 +4,48 @@ import 'package:myapp/bluetooth/bluetooth_info.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
 import 'package:provider/provider.dart';
 
-
+// displays current device and allows the user to disconnect and reconnect
 class ConnectedDeviceTile extends StatelessWidget {
-  const ConnectedDeviceTile(
-      {this.onConnectTap, this.onDisconnectTap});
+  const ConnectedDeviceTile({this.onConnectTap, this.onDisconnectTap});
   final Function(BluetoothDevice d) onConnectTap;
   final VoidCallback onDisconnectTap;
 
-  Widget _buildTitle(BuildContext context, BluetoothDevice device) {
-    if (device.name.length > 0) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(device.name),
-          Text(
-            device.id.toString(),
-            style: Theme.of(context).textTheme.caption,
-          ),
-        ],
-      );
-    } else {
-      return Text(device.id.toString());
-    }
+  @override
+  Widget build(BuildContext context) {
+    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
+    return ListTile(
+      // uses previous device to allow the user to reconnect after disconnecting
+      // without having to scan again
+      title: new _ConnectedDeviceTitle(
+        context: context,
+        device: btInfo.previousDevice,
+      ),
+      trailing: new _ConnectedDeviceButton(
+        onDisconnectTap: onDisconnectTap,
+        onConnectTap: onConnectTap,
+        btInfo: btInfo,
+        device: btInfo.previousDevice,
+      ),
+    );
   }
+}
 
-  Widget _buildButton(BTInfo btInfo, BluetoothDevice device) {
+class _ConnectedDeviceButton extends StatelessWidget {
+  const _ConnectedDeviceButton({
+    Key key,
+    @required this.onDisconnectTap,
+    @required this.onConnectTap,
+    @required this.btInfo,
+    @required this.device,
+  }) : super(key: key);
+
+  final Function onDisconnectTap;
+  final Function(BluetoothDevice d) onConnectTap;
+  final BTInfo btInfo;
+  final BluetoothDevice device;
+
+  @override
+  Widget build(BuildContext context) {
     if (btInfo.isConnected) {
       return RaisedButton(
         child: Text("DISCONNECT"),
@@ -50,43 +66,78 @@ class ConnectedDeviceTile extends StatelessWidget {
       );
     }
   }
+}
+
+class _ConnectedDeviceTitle extends StatelessWidget {
+  const _ConnectedDeviceTitle({
+    Key key,
+    @required this.context,
+    @required this.device,
+  }) : super(key: key);
+
+  final BuildContext context;
+  final BluetoothDevice device;
+
+  @override
+  Widget build(BuildContext context) {
+    if (device.name.length > 0) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(device.name),
+          Text(
+            device.id.toString(),
+            style: Theme.of(context).textTheme.caption,
+          ),
+        ],
+      );
+    } else {
+      return Text(device.id.toString());
+    }
+  }
+}
+
+// displays a ble device and allows the user to connect, if connectable
+class ScanResultTile extends StatelessWidget {
+  const ScanResultTile({
+    this.result,
+    this.onConnectTap,
+    this.onDisconnectTap,
+  });
+  final ScanResult result;
+  final VoidCallback onConnectTap;
+  final VoidCallback onDisconnectTap;
 
   @override
   Widget build(BuildContext context) {
     final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
     return ListTile(
-      title: _buildTitle(context, btInfo.previousDevice), 
-      trailing: _buildButton(btInfo, btInfo.previousDevice),
-    );
+        title: new _ScanResultTitle(result: result, context: context),
+        trailing: new _ScanResultButton(
+            result: result,
+            onDisconnectTap: onDisconnectTap,
+            onConnectTap: onConnectTap,
+            btInfo: btInfo));
   }
 }
 
-class ScanResultTile extends StatelessWidget {
-  const ScanResultTile(
-      {this.result, this.onConnectTap, this.onDisconnectTap});
+class _ScanResultButton extends StatelessWidget {
+  const _ScanResultButton({
+    Key key,
+    @required this.result,
+    @required this.onDisconnectTap,
+    @required this.onConnectTap,
+    @required this.btInfo,
+  }) : super(key: key);
+
   final ScanResult result;
-  final VoidCallback onConnectTap;
-  final VoidCallback onDisconnectTap;
+  final Function onDisconnectTap;
+  final Function onConnectTap;
+  final BTInfo btInfo;
 
-  Widget _buildTitle(BuildContext context) {
-    if (result.device.name.length > 0) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(result.device.name),
-          Text(
-            result.device.id.toString(),
-            style: Theme.of(context).textTheme.caption,
-          )
-        ],
-      );
-    } else {
-      return Text(result.device.id.toString());
-    }
-  }
-
-  Widget _buildButton(BTInfo btInfo) {
+  @override
+  Widget build(BuildContext context) {
     if (btInfo.device != null && result.device.id == btInfo.device.id) {
       return RaisedButton(
         child: Text("DISCONNECT"),
@@ -105,14 +156,39 @@ class ScanResultTile extends StatelessWidget {
       );
     }
   }
+}
+
+class _ScanResultTitle extends StatelessWidget {
+  const _ScanResultTitle({
+    Key key,
+    @required this.result,
+    @required this.context,
+  }) : super(key: key);
+
+  final ScanResult result;
+  final BuildContext context;
 
   @override
   Widget build(BuildContext context) {
-    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
-    return ListTile(title: _buildTitle(context), trailing: _buildButton(btInfo));
+    if (result.device.name.length > 0) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(result.device.name),
+          Text(
+            result.device.id.toString(),
+            style: Theme.of(context).textTheme.caption,
+          )
+        ],
+      );
+    } else {
+      return Text(result.device.id.toString());
+    }
   }
 }
 
+// text that shows when there are no scan results
 class PullToScanWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -122,7 +198,9 @@ class PullToScanWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 5),
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).size.height / 5,
+          ),
         ),
         Text(
           'Pull to Scan',

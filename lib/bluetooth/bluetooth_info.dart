@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_blue/flutter_blue.dart';
 
+// contains all BLE state
 class BTInfo {
   FlutterBlue flutterBlue;
 

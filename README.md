@@ -27,6 +27,7 @@ Data is stored in an SQLite database, which consists of a single table containin
 - [x] Settings page (settings saved via shared preferences)
 - [x] Store sampled data in a SQLite database
 - [x] Graph data on home screen
+- [ ] Tapping an entry on the graph selects it and displays data in place of current data
 - [ ] Automatically connect to the last used device
 - [ ] Support for multiple devices
 - [ ] Improve aesthetic experience

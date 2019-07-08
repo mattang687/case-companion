@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 
 import 'scan_page_widgets.dart';
 
+// where the user scans for / connects to / disconnects from BLE devices
 class ScanPage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => new _ScanPageState();
 }
@@ -15,7 +15,8 @@ class _ScanPageState extends State<ScanPage> {
   Widget connectedDeviceWidget = Container();
 
   List<Widget> _buildScanResultTiles() {
-    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
+    final InheritedBluetooth inheritedBluetooth =
+        Provider.of<InheritedBluetooth>(context);
     List<Widget> widgetList = new List<Widget>();
     widgetList.add(connectedDeviceWidget);
     widgetList.addAll(inheritedBluetooth.btInfo.scanResults.values
@@ -28,11 +29,14 @@ class _ScanPageState extends State<ScanPage> {
     return widgetList;
   }
 
+  // if a device is connected, it will not advertise, so show a tile for the current device
+  // allows the user to disconnect from a device after navigating away from the scan page
   void _buildConnectedDevice() {
-    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
+    final InheritedBluetooth inheritedBluetooth =
+        Provider.of<InheritedBluetooth>(context);
     if (inheritedBluetooth.btInfo.isConnected) {
       connectedDeviceWidget = ConnectedDeviceTile(
-        onConnectTap: inheritedBluetooth.connect, 
+        onConnectTap: inheritedBluetooth.connect,
         onDisconnectTap: inheritedBluetooth.disconnect,
       );
     } else {
@@ -42,7 +46,8 @@ class _ScanPageState extends State<ScanPage> {
 
   // return when done
   Future<void> _scan() async {
-    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
+    final InheritedBluetooth inheritedBluetooth =
+        Provider.of<InheritedBluetooth>(context);
     _buildConnectedDevice();
     inheritedBluetooth.startScan();
     while (inheritedBluetooth.btInfo.isScanning) {
@@ -53,7 +58,8 @@ class _ScanPageState extends State<ScanPage> {
 
   @override
   Widget build(BuildContext context) {
-    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
+    final InheritedBluetooth inheritedBluetooth =
+        Provider.of<InheritedBluetooth>(context);
     return WillPopScope(
       onWillPop: inheritedBluetooth.stopScan,
       child: Scaffold(

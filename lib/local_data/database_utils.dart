@@ -22,8 +22,8 @@ class DatabaseUtils {
   static final DatabaseUtils instance = DatabaseUtils._privateConstructor();
 
   static Database _database;
-  Future<Database> get database async{
-    if(_database != null) return _database;
+  Future<Database> get database async {
+    if (_database != null) return _database;
     _database = await _initDatabase();
     return _database;
   }
@@ -33,7 +33,8 @@ class DatabaseUtils {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     if (documentsDirectory == null) print("DOC DIR NULL");
     String path = join(documentsDirectory.path, _databaseName);
-    return await openDatabase(path,
+    return await openDatabase(
+      path,
       version: _databaseVersion,
       onCreate: _onCreate,
     );
@@ -51,15 +52,17 @@ class DatabaseUtils {
     ''');
   }
 
+  // insert an entry
   Future<int> insert(Entry e) async {
     Database db = await instance.database;
     try {
       return await db.insert(table, e.toMap());
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }
 
+  // query all rows
   Future<List<Entry>> queryAllRows() async {
     Database db = await instance.database;
     List<Entry> ret = new List<Entry>();
@@ -71,28 +74,15 @@ class DatabaseUtils {
     return ret;
   }
 
-  Future<int> queryRowCount() async {
-    Database db = await instance.database;
-    return Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $table'));
-  }
-
-  Future<int> delete(int id) async {
-    Database db = await instance.database;
-    return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
-  }
-
-  // delete the oldest entry
-  Future<int> deleteOldest() async {
-    Database db = await instance.database;
-    return await db.rawDelete('DELETE FROM $table WHERE $columnTime = (SELECT MIN($columnTime) FROM $table)');
-  }
-
+  // delete before a specified dateTime
   Future<int> deleteBefore(DateTime dateTime) async {
     Database db = await instance.database;
     int unixTime = dateTime.millisecondsSinceEpoch ~/ 1000;
-    return await db.delete(table, where: '$columnTime < ?', whereArgs: [unixTime]);
+    return await db
+        .delete(table, where: '$columnTime < ?', whereArgs: [unixTime]);
   }
 
+  // clears all data by deleting the table
   clear() async {
     Database db = await instance.database;
     db.delete(table);

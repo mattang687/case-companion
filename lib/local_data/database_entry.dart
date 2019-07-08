@@ -1,6 +1,6 @@
 class Entry {
   Entry({this.id, this.time, this.temp, this.hum});
-
+  
   int id;
   int time;
   num temp;
@@ -9,11 +9,7 @@ class Entry {
   static final columns = ["id", "time", "temp", "hum"];
 
   Map<String, dynamic> toMap() {
-    Map<String,dynamic> map = {
-      "time": time,
-      "temp": temp,
-      "hum": hum
-    };
+    Map<String, dynamic> map = {"time": time, "temp": temp, "hum": hum};
 
     if (id != null) {
       map["id"] = id;

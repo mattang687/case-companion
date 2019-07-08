@@ -6,13 +6,14 @@ import 'package:flutter/services.dart';
 
 import 'bluetooth_info.dart';
 
+// handles all interaction with BLE
 class InheritedBluetooth with ChangeNotifier {
   final BTInfo btInfo = new BTInfo();
   double temp;
   int hum;
   int bat;
 
-  startScan() {
+  void startScan() {
     btInfo.scanResults = new Map();
     btInfo.scanSubscription = btInfo.flutterBlue
         .scan(
@@ -28,7 +29,7 @@ class InheritedBluetooth with ChangeNotifier {
   }
 
   Future<bool> stopScan() async {
-    // return true to satisfy WillPopScope widget
+    // return true to satisfy WillPopScope widget in ScanPage
     btInfo.scanSubscription?.cancel();
     btInfo.scanSubscription = null;
     btInfo.isScanning = false;
@@ -36,7 +37,7 @@ class InheritedBluetooth with ChangeNotifier {
     return true;
   }
 
-  connect(BluetoothDevice d) async {
+  void connect(BluetoothDevice d) async {
     stopScan();
     disconnect();
     btInfo.device = d;
@@ -68,7 +69,7 @@ class InheritedBluetooth with ChangeNotifier {
     });
   }
 
-  disconnect() {
+  void disconnect() {
     // Remove all value changed listeners
     btInfo.valueChangedSubscriptions.forEach((uuid, sub) => sub.cancel());
     btInfo.valueChangedSubscriptions.clear();
@@ -76,7 +77,7 @@ class InheritedBluetooth with ChangeNotifier {
     btInfo.deviceStateSubscription = null;
     btInfo.deviceConnection?.cancel();
     btInfo.deviceConnection = null;
-    // Clear Services
+    // Clear services
     btInfo.services = new List();
     btInfo.device = null;
     notifyListeners();
@@ -92,6 +93,7 @@ class InheritedBluetooth with ChangeNotifier {
     super.dispose();
   }
 
+  // if the read fails because the device isn't ready, try again
   Future<List<int>> _repeatedRead(BluetoothCharacteristic c) async {
     try {
       return await btInfo.device.readCharacteristic(c);
@@ -101,14 +103,15 @@ class InheritedBluetooth with ChangeNotifier {
     }
   }
 
-  Future<void> readTemp() async {
+  Future<void> _readTemp() async {
     if (!btInfo.isConnected) {
       temp = 0;
       notifyListeners();
       return;
     }
     // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
-    // two bytes, most significant last, two's complement for negative numbers
+    // data is stored in two bytes, most significant last
+    // two's complement for negative numbers
     BluetoothCharacteristic cTemp = BluetoothCharacteristic(
       descriptors: <BluetoothDescriptor>[],
       properties: null,
@@ -117,6 +120,8 @@ class InheritedBluetooth with ChangeNotifier {
     );
 
     List<int> ret = await _repeatedRead(cTemp);
+
+    // add up the bytes
     double tgt;
     int sum = ret[1] * 256 + ret[0];
     if (ret[1] > 127) {
@@ -130,14 +135,14 @@ class InheritedBluetooth with ChangeNotifier {
     return;
   }
 
-  Future<void> readHum() async {
+  Future<void> _readHum() async {
     if (!btInfo.isConnected) {
       hum = 0;
       notifyListeners();
       return;
     }
     // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
-    // two bytes, most significant last, unsigned
+    // data is stored in two bytes, most significant last, unsigned
     BluetoothCharacteristic cHum = BluetoothCharacteristic(
       descriptors: <BluetoothDescriptor>[],
       properties: null,
@@ -146,20 +151,22 @@ class InheritedBluetooth with ChangeNotifier {
     );
 
     List<int> ret = await _repeatedRead(cHum);
+
+    // add up the bytes
     int sum = ret[1] * 256 + ret[0];
     hum = sum ~/ 100;
     notifyListeners();
     return;
   }
 
-  Future<void> readBat() async {
+  Future<void> _readBat() async {
     if (!btInfo.isConnected) {
       bat = 0;
       notifyListeners();
       return;
     }
     // Base UUID: 00000000-0000-1000-8000-00805F9B34FB
-    // one byte, unsigned
+    // data is stored in one byte, unsigned
     BluetoothCharacteristic cBat = BluetoothCharacteristic(
       descriptors: <BluetoothDescriptor>[],
       properties: null,
@@ -171,5 +178,11 @@ class InheritedBluetooth with ChangeNotifier {
     bat = ret[0];
     notifyListeners();
     return;
+  }
+
+  Future<void> refresh() async {
+    await _readTemp();
+    await _readHum();
+    await _readBat();
   }
 }
