@@ -58,7 +58,7 @@ class TempHumChart extends StatelessWidget {
             tickProviderSpec:
                 new charts.BasicNumericTickProviderSpec(desiredTickCount: 5),
           ),
-          behaviors: [new charts.LinePointHighlighter()],
+          behaviors: [new charts.LinePointHighlighter(), new charts.PanAndZoomBehavior()],
         ));
   }
 }
