@@ -30,7 +30,7 @@ class DataWidget extends StatelessWidget {
         Provider.of<InheritedBluetooth>(context);
     final bool inCelsius = Provider.of<SettingsHelper>(context).inCelsius;
     return Column(
-      children: inheritedBluetooth.btInfo.isConnected
+      children: inheritedBluetooth.isConnected()
           ? <Widget>[
               _buildTemp(inheritedBluetooth, inCelsius),
               _buildHum(inheritedBluetooth),

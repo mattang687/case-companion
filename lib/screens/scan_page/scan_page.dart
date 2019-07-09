@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
 import 'package:provider/provider.dart';
 
@@ -14,27 +15,12 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   Widget connectedDeviceWidget = Container();
 
-  List<Widget> _buildScanResultTiles() {
-    final InheritedBluetooth inheritedBluetooth =
-        Provider.of<InheritedBluetooth>(context);
-    List<Widget> widgetList = new List<Widget>();
-    widgetList.add(connectedDeviceWidget);
-    widgetList.addAll(inheritedBluetooth.btInfo.scanResults.values
-        .map((r) => ScanResultTile(
-              result: r,
-              onConnectTap: () => inheritedBluetooth.connect(r.device),
-              onDisconnectTap: () => inheritedBluetooth.disconnect(),
-            ))
-        .toList());
-    return widgetList;
-  }
-
   // if a device is connected, it will not advertise, so show a tile for the current device
   // allows the user to disconnect from a device after navigating away from the scan page
   void _buildConnectedDevice() {
     final InheritedBluetooth inheritedBluetooth =
         Provider.of<InheritedBluetooth>(context);
-    if (inheritedBluetooth.btInfo.isConnected) {
+    if (inheritedBluetooth.isConnected()) {
       connectedDeviceWidget = ConnectedDeviceTile(
         onConnectTap: inheritedBluetooth.connect,
         onDisconnectTap: inheritedBluetooth.disconnect,
@@ -50,10 +36,30 @@ class _ScanPageState extends State<ScanPage> {
         Provider.of<InheritedBluetooth>(context);
     _buildConnectedDevice();
     inheritedBluetooth.startScan();
-    while (inheritedBluetooth.btInfo.isScanning) {
+    while (inheritedBluetooth.isScanning) {
       await Future.delayed(Duration(milliseconds: 100));
     }
     return;
+  }
+
+  Widget _buildScanResults() {
+    InheritedBluetooth inheritedBluetooth =
+        Provider.of<InheritedBluetooth>(context);
+    return StreamBuilder<List<ScanResult>>(
+      stream: FlutterBlue.instance.scanResults,
+      initialData: [],
+      builder: (c, snapshot) {
+        if (snapshot.data.length == 0) return PullToScanWidget();
+        return Column(
+            children: snapshot.data
+                .map((r) => ScanResultTile(
+                      result: r,
+                      onConnectTap: () => inheritedBluetooth.connect(r.device),
+                      onDisconnectTap: () => inheritedBluetooth.disconnect(),
+                    ))
+                .toList());
+      },
+    );
   }
 
   @override
@@ -76,18 +82,14 @@ class _ScanPageState extends State<ScanPage> {
         body: Stack(
           children: <Widget>[
             RefreshIndicator(
-              child: inheritedBluetooth.btInfo.scanResults.length != 0
-                  ? ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: _buildScanResultTiles(),
-                    )
-                  : SingleChildScrollView(
+              child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: Container(
-                        child: Center(
-                          child: !inheritedBluetooth.btInfo.isScanning
-                              ? PullToScanWidget()
-                              : Container(),
+                        child: Column(
+                          children: <Widget>[
+                            connectedDeviceWidget,
+                            _buildScanResults(),
+                          ],
                         ),
                         height: MediaQuery.of(context).size.height -
                             kToolbarHeight -

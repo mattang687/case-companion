@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:myapp/bluetooth/bluetooth_info.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
 import 'package:provider/provider.dart';
 
@@ -12,19 +11,19 @@ class ConnectedDeviceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
+    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
     return ListTile(
       // uses previous device to allow the user to reconnect after disconnecting
       // without having to scan again
       title: new _ConnectedDeviceTitle(
         context: context,
-        device: btInfo.previousDevice,
+        device: inheritedBluetooth.previousDevice,
       ),
       trailing: new _ConnectedDeviceButton(
         onDisconnectTap: onDisconnectTap,
         onConnectTap: onConnectTap,
-        btInfo: btInfo,
-        device: btInfo.previousDevice,
+        inheritedBluetooth: inheritedBluetooth,
+        device: inheritedBluetooth.previousDevice,
       ),
     );
   }
@@ -35,18 +34,18 @@ class _ConnectedDeviceButton extends StatelessWidget {
     Key key,
     @required this.onDisconnectTap,
     @required this.onConnectTap,
-    @required this.btInfo,
+    @required this.inheritedBluetooth,
     @required this.device,
   }) : super(key: key);
 
   final Function onDisconnectTap;
   final Function(BluetoothDevice d) onConnectTap;
-  final BTInfo btInfo;
+  final InheritedBluetooth inheritedBluetooth;
   final BluetoothDevice device;
 
   @override
   Widget build(BuildContext context) {
-    if (btInfo.isConnected) {
+    if (inheritedBluetooth.isConnected()) {
       return RaisedButton(
         child: Text("DISCONNECT"),
         color: Colors.red,
@@ -111,14 +110,14 @@ class ScanResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final BTInfo btInfo = Provider.of<InheritedBluetooth>(context).btInfo;
+    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
     return ListTile(
         title: new _ScanResultTitle(result: result, context: context),
         trailing: new _ScanResultButton(
             result: result,
             onDisconnectTap: onDisconnectTap,
             onConnectTap: onConnectTap,
-            btInfo: btInfo));
+            inheritedBluetooth: inheritedBluetooth));
   }
 }
 
@@ -128,17 +127,17 @@ class _ScanResultButton extends StatelessWidget {
     @required this.result,
     @required this.onDisconnectTap,
     @required this.onConnectTap,
-    @required this.btInfo,
+    @required this.inheritedBluetooth,
   }) : super(key: key);
 
   final ScanResult result;
   final Function onDisconnectTap;
   final Function onConnectTap;
-  final BTInfo btInfo;
+  final InheritedBluetooth inheritedBluetooth;
 
   @override
   Widget build(BuildContext context) {
-    if (btInfo.device != null && result.device.id == btInfo.device.id) {
+    if (inheritedBluetooth.device != null && result.device.id == inheritedBluetooth.device.id) {
       return RaisedButton(
         child: Text("DISCONNECT"),
         color: Colors.red,

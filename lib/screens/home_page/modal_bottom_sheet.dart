@@ -10,8 +10,8 @@ class ModalBottomSheet extends StatelessWidget {
   Future<void> _updateData(BuildContext context) async {
     InheritedBluetooth inheritedBluetooth =
         Provider.of<InheritedBluetooth>(context);
-    if (inheritedBluetooth.btInfo.isConnected) {
-      await inheritedBluetooth.refresh();
+    if (inheritedBluetooth.isConnected()) {
+      await inheritedBluetooth.readAll();
 
       DatabaseHelper db = Provider.of<DatabaseHelper>(context);
       await db.save(
@@ -116,10 +116,10 @@ class ModalBottomSheet extends StatelessWidget {
 // Displays currently connected device and its battery level
 class DeviceInfoTile extends StatelessWidget {
   Widget _buildTitle(InheritedBluetooth inheritedBluetooth) {
-    return inheritedBluetooth.btInfo.isConnected
+    return inheritedBluetooth.isConnected()
         ? Column(
             children: <Widget>[
-              Text('${inheritedBluetooth.btInfo.device.name}'),
+              Text('${inheritedBluetooth.device.name}'),
               Text(
                 '${'Battery: ${inheritedBluetooth.bat}%'}',
                 style: TextStyle(color: Colors.grey),
