@@ -84,35 +84,17 @@ class ModalBottomSheet extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.refresh),
             title: Text('Refresh Data'),
-            onTap: () {},
-            trailing: RaisedButton(
-              child: Text('REFRESH'),
-              textColor: Colors.white,
-              color: Colors.black,
-              onPressed: () => _updateData(context),
-            ),
+            onTap: () => _updateData(context),
           ),
           ListTile(
             leading: Icon(Icons.clear),
             title: Text('Clear Before'),
-            onTap: () {},
-            trailing: RaisedButton(
-              child: Text('PICK'),
-              textColor: Colors.white,
-              color: Colors.black,
-              onPressed: () => _showDatePicker(context),
-            ),
+            onTap: () => _showDatePicker(context),
           ),
           ListTile(
             leading: Icon(Icons.clear_all),
             title: Text('Clear All'),
-            onTap: () {},
-            trailing: RaisedButton(
-              child: Text('CLEAR'),
-              textColor: Colors.white,
-              color: Colors.red,
-              onPressed: () => _showDialog(context),
-            ),
+            onTap: () => _showDialog(context),
           ),
           ListTile(
             leading: Icon(Icons.wb_cloudy),
@@ -146,7 +128,7 @@ class DeviceInfoTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
           )
-        : Text('Not Connected');
+        : Text('Scan for Devices');
   }
 
   @override
@@ -156,16 +138,10 @@ class DeviceInfoTile extends StatelessWidget {
     return ListTile(
       leading: Icon(Icons.devices),
       title: _buildTitle(inheritedBluetooth),
-      onTap: () {},
-      trailing: RaisedButton(
-        child: Text('DEVICES'),
-        color: Colors.black,
-        textColor: Colors.white,
-        onPressed: () => Navigator.push(
+      onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ScanPage()),
             ),
-      ),
     );
   }
 }

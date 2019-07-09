@@ -20,6 +20,11 @@ void main() {
         ],
         child: MaterialApp(
           title: "Case Companion",
+          theme: ThemeData(
+            primaryColor: Colors.amber,
+            accentColor: Colors.red,
+            backgroundColor: Colors.black,
+          ),
           home: HomePage()
         ),
       ),
