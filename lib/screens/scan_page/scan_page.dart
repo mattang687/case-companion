@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
 import 'package:provider/provider.dart';
 
@@ -30,36 +29,15 @@ class _ScanPageState extends State<ScanPage> {
     }
   }
 
-  // return when done
   Future<void> _scan() async {
     final InheritedBluetooth inheritedBluetooth =
         Provider.of<InheritedBluetooth>(context);
+    // only build connected device on scan because old ScanResultTile
+    // will remain from previous scan results
     _buildConnectedDevice();
-    inheritedBluetooth.startScan();
-    while (inheritedBluetooth.isScanning) {
-      await Future.delayed(Duration(milliseconds: 100));
-    }
-    return;
-  }
 
-  Widget _buildScanResults() {
-    InheritedBluetooth inheritedBluetooth =
-        Provider.of<InheritedBluetooth>(context);
-    return StreamBuilder<List<ScanResult>>(
-      stream: FlutterBlue.instance.scanResults,
-      initialData: [],
-      builder: (c, snapshot) {
-        if (snapshot.data.length == 0) return PullToScanWidget();
-        return Column(
-            children: snapshot.data
-                .map((r) => ScanResultTile(
-                      result: r,
-                      onConnectTap: () => inheritedBluetooth.connect(r.device),
-                      onDisconnectTap: () => inheritedBluetooth.disconnect(),
-                    ))
-                .toList());
-      },
-    );
+    // returns when done to stop the refresh animation
+    return inheritedBluetooth.startScan();
   }
 
   @override
@@ -79,27 +57,23 @@ class _ScanPageState extends State<ScanPage> {
             },
           ),
         ),
-        body: Stack(
-          children: <Widget>[
-            RefreshIndicator(
-              child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Container(
-                        child: Column(
-                          children: <Widget>[
-                            connectedDeviceWidget,
-                            _buildScanResults(),
-                          ],
-                        ),
-                        height: MediaQuery.of(context).size.height -
-                            kToolbarHeight -
-                            MediaQuery.of(context).padding.top -
-                            MediaQuery.of(context).padding.bottom,
-                      ),
+        body: RefreshIndicator(
+          child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    child: Column(
+                      children: <Widget>[
+                        connectedDeviceWidget,
+                        ScanResults(),
+                      ],
                     ),
-              onRefresh: _scan,
-            ),
-          ],
+                    height: MediaQuery.of(context).size.height -
+                        kToolbarHeight -
+                        MediaQuery.of(context).padding.top -
+                        MediaQuery.of(context).padding.bottom,
+                  ),
+                ),
+          onRefresh: _scan,
         ),
       ),
     );

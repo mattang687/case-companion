@@ -157,6 +157,29 @@ class _ScanResultButton extends StatelessWidget {
   }
 }
 
+class ScanResults extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    InheritedBluetooth inheritedBluetooth =
+        Provider.of<InheritedBluetooth>(context);
+    return StreamBuilder<List<ScanResult>>(
+      stream: FlutterBlue.instance.scanResults,
+      initialData: [],
+      builder: (c, snapshot) {
+        if (snapshot.data.length == 0) return PullToScanWidget();
+        return Column(
+            children: snapshot.data
+                .map((r) => ScanResultTile(
+                      result: r,
+                      onConnectTap: () => inheritedBluetooth.connect(r.device),
+                      onDisconnectTap: () => inheritedBluetooth.disconnect(),
+                    ))
+                .toList());
+      },
+    );
+  }
+}
+
 class _ScanResultTitle extends StatelessWidget {
   const _ScanResultTitle({
     Key key,
