@@ -25,7 +25,7 @@ class DataWidget extends StatelessWidget {
 
   Widget _buildHum(InheritedBluetooth inheritedBluetooth) {
     return Text(
-      '${inheritedBluetooth.hum?? 0}%',
+      '${inheritedBluetooth.hum ?? 0}%',
       style:
           TextStyle(fontSize: 50, fontFamily: 'Raleway', color: Colors.black),
     );
@@ -36,22 +36,25 @@ class DataWidget extends StatelessWidget {
     final InheritedBluetooth inheritedBluetooth =
         Provider.of<InheritedBluetooth>(context);
     final bool inCelsius = Provider.of<SettingsHelper>(context).inCelsius;
-    return FittedBox(
-      fit: BoxFit.fitHeight,
-      child: Column(
-        children: inheritedBluetooth.isConnected()
-            ? <Widget>[
+    return inheritedBluetooth.isConnected()
+        ? FittedBox(
+            fit: BoxFit.fitHeight,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
                 _buildTemp(inheritedBluetooth, inCelsius, context),
                 _buildHum(inheritedBluetooth),
-              ]
-            : <Widget>[
-                Text(
-                  'Connect to a device to show data',
-                  style: TextStyle(color: Colors.grey),
-                )
               ],
-        mainAxisAlignment: MainAxisAlignment.center,
-      ),
-    );
+            ),
+          )
+        : Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Connect to a device to show data',
+                style: TextStyle(color: Colors.grey),
+              )
+            ],
+          );
   }
 }

@@ -11,19 +11,22 @@ class ConnectedDeviceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
-    return ListTile(
-      // uses previous device to allow the user to reconnect after disconnecting
-      // without having to scan again
-      title: new _ConnectedDeviceTitle(
-        context: context,
-        device: inheritedBluetooth.previousDevice,
-      ),
-      trailing: new _ConnectedDeviceButton(
-        onDisconnectTap: onDisconnectTap,
-        onConnectTap: onConnectTap,
-        inheritedBluetooth: inheritedBluetooth,
-        device: inheritedBluetooth.previousDevice,
+    final InheritedBluetooth inheritedBluetooth =
+        Provider.of<InheritedBluetooth>(context);
+    return Card(
+      child: ListTile(
+        // uses previous device to allow the user to reconnect after disconnecting
+        // without having to scan again
+        title: new _ConnectedDeviceTitle(
+          context: context,
+          device: inheritedBluetooth.previousDevice,
+        ),
+        trailing: new _ConnectedDeviceButton(
+          onDisconnectTap: onDisconnectTap,
+          onConnectTap: onConnectTap,
+          inheritedBluetooth: inheritedBluetooth,
+          device: inheritedBluetooth.previousDevice,
+        ),
       ),
     );
   }
@@ -46,22 +49,28 @@ class _ConnectedDeviceButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (inheritedBluetooth.isConnected()) {
-      return RaisedButton(
-        child: Text("DISCONNECT"),
-        color: Theme.of(context).accentColor,
-        textColor: Colors.white,
-        onPressed: () {
-          onDisconnectTap();
-        },
+      return SizedBox(
+        width: 100,
+        child: RaisedButton(
+          child: Text("DISCONNECT"),
+          color: Theme.of(context).accentColor,
+          textColor: Colors.white,
+          onPressed: () {
+            onDisconnectTap();
+          },
+        ),
       );
     } else {
-      return RaisedButton(
-        child: Text('CONNECT'),
-        color: Colors.black,
-        textColor: Colors.white,
-        onPressed: () {
-          onConnectTap(device);
-        },
+      return SizedBox(
+        width: 100,
+        child: RaisedButton(
+          child: Text('CONNECT'),
+          color: Colors.black,
+          textColor: Colors.white,
+          onPressed: () {
+            onConnectTap(device);
+          },
+        ),
       );
     }
   }
@@ -110,14 +119,19 @@ class ScanResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final InheritedBluetooth inheritedBluetooth = Provider.of<InheritedBluetooth>(context);
-    return ListTile(
+    final InheritedBluetooth inheritedBluetooth =
+        Provider.of<InheritedBluetooth>(context);
+    return Card(
+      child: ListTile(
         title: new _ScanResultTitle(result: result, context: context),
         trailing: new _ScanResultButton(
-            result: result,
-            onDisconnectTap: onDisconnectTap,
-            onConnectTap: onConnectTap,
-            inheritedBluetooth: inheritedBluetooth));
+          result: result,
+          onDisconnectTap: onDisconnectTap,
+          onConnectTap: onConnectTap,
+          inheritedBluetooth: inheritedBluetooth,
+        ),
+      ),
+    );
   }
 }
 
@@ -137,21 +151,29 @@ class _ScanResultButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (inheritedBluetooth.device != null && result.device.id == inheritedBluetooth.device.id) {
-      return RaisedButton(
-        child: Text("DISCONNECT"),
-        color: Theme.of(context).accentColor,
-        textColor: Colors.white,
-        onPressed: () => onDisconnectTap(),
+    if (inheritedBluetooth.device != null &&
+        result.device.id == inheritedBluetooth.device.id) {
+      return SizedBox(
+        width: 100,
+        child: RaisedButton(
+          child: Text("DISCONNECT"),
+          color: Theme.of(context).accentColor,
+          textColor: Colors.white,
+          onPressed: () => onDisconnectTap(),
+        ),
       );
     } else {
-      return RaisedButton(
-        child: Text('CONNECT'),
-        color:
-            (result.advertisementData.connectable) ? Colors.black : Colors.grey,
-        textColor: Colors.white,
-        onPressed: () =>
-            (result.advertisementData.connectable) ? onConnectTap() : null,
+      return SizedBox(
+        width: 100,
+        child: RaisedButton(
+          child: Text('CONNECT'),
+          color: (result.advertisementData.connectable)
+              ? Colors.black
+              : Colors.grey,
+          textColor: Colors.white,
+          onPressed: () =>
+              (result.advertisementData.connectable) ? onConnectTap() : null,
+        ),
       );
     }
   }
