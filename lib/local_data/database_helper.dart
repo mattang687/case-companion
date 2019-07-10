@@ -20,7 +20,7 @@ class DatabaseHelper with ChangeNotifier {
   }
 
   // inserts given data at current time
-  Future<void> save({int temp, int hum}) async {
+  Future<void> save({double temp, int hum}) async {
     DatabaseUtils db = DatabaseUtils.instance;
     Entry e = new Entry(
       time: (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round(),
@@ -32,24 +32,10 @@ class DatabaseHelper with ChangeNotifier {
     return;
   }
 
-  // clears the database
-  Future<void> clearData() async {
-    DatabaseUtils db = DatabaseUtils.instance;
-    await db.clear();
-    await updateData();
-    return;
-  }
-
-  // clears all entries before the specified date
-  // rounds time down to 00:00
+  // clears all entries before the specified date (inclusive)
   Future<void> deleteBefore(DateTime dateTime) async {
     DatabaseUtils db = DatabaseUtils.instance;
-    DateTime roundDown = DateTime.utc(
-      dateTime.year,
-      dateTime.month,
-      dateTime.day,
-    );
-    await db.deleteBefore(roundDown);
+    await db.deleteBefore(dateTime);
     await updateData();
     return;
   }

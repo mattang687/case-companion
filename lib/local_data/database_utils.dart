@@ -94,12 +94,12 @@ class DatabaseUtils {
     return ret;
   }
 
-  // delete before a specified dateTime
+  // delete before a specified dateTime (inclusive)
   Future<int> deleteBefore(DateTime dateTime) async {
     Database db = await instance.database;
     int unixTime = dateTime.millisecondsSinceEpoch ~/ 1000;
     return await db
-        .delete(table, where: '$columnTime < ?', whereArgs: [unixTime]);
+        .delete(table, where: '$columnTime <= ?', whereArgs: [unixTime]);
   }
 
   // clears all data by deleting the table
