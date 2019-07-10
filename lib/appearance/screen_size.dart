@@ -9,6 +9,16 @@ double screenHeight(BuildContext context,
   return (_screenSize(context).height - subtract) / divide;
 }
 
+double screenHeightNoTopBar(BuildContext context, {double divide = 1}) {
+  return screenHeight(
+    context,
+    divide: divide,
+    subtract: kToolbarHeight +
+        MediaQuery.of(context).padding.top +
+        MediaQuery.of(context).padding.bottom,
+  );
+}
+
 double screenHeightNoBars(BuildContext context, {double divide = 1}) {
   return screenHeight(
     context,

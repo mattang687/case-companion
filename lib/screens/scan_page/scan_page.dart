@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:myapp/appearance/screen_size.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
 import 'package:provider/provider.dart';
 
@@ -51,13 +52,6 @@ class _ScanPageState extends State<ScanPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Connect to a Device"),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              inheritedBluetooth.stopScan();
-              Navigator.pop(context);
-            },
-          ),
         ),
         body: RefreshIndicator(
           child: SingleChildScrollView(
@@ -69,10 +63,7 @@ class _ScanPageState extends State<ScanPage> {
                         ScanResults(),
                       ],
                     ),
-                    height: MediaQuery.of(context).size.height -
-                        kToolbarHeight -
-                        MediaQuery.of(context).padding.top -
-                        MediaQuery.of(context).padding.bottom,
+                    height: screenHeightNoTopBar(context)
                   ),
                 ),
           onRefresh: _scan,

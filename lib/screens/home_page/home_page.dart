@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/screens/home_page/screen_size.dart';
+import 'package:myapp/appearance/screen_size.dart';
 
 import 'bottom_bar.dart';
 import 'data_widget.dart';
