@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 // handles all interaction with BLE
@@ -59,33 +60,56 @@ class InheritedBluetooth with ChangeNotifier {
   }
 
   Future<void> _parseTemp(BluetoothCharacteristic c) async {
-    List<int> ret = await c.read();
+    List<int> readResult;
+
+    try {
+      readResult = await c.read();
+    } on PlatformException {
+      // PlatformException indicates that a read was performed while another was in
+      // progress. Do nothing
+      return;
+    }
 
     // add up the bytes
-    double tgt;
-    int sum = ret[1] * 256 + ret[0];
-    if (ret[1] > 127) {
+    int sum = readResult[1] * 256 + readResult[0];
+    if (readResult[1] > 127) {
       // negative, find two's complement
-      tgt = -(65536 - sum) / 100;
+      temp = -(65536 - sum) / 100;
     } else {
-      tgt = sum / 100;
+      temp = sum / 100;
     }
-    temp = tgt;
     return;
   }
 
   Future<void> _parseHum(BluetoothCharacteristic c) async {
-    List<int> ret = await c.read();
+    List<int> readResult;
+
+    try {
+      readResult = await c.read();
+    } on PlatformException {
+      // PlatformException indicates that a read was performed while another was in
+      // progress. Do nothing
+      return;
+    }
 
     // add up the bytes
-    int sum = ret[1] * 256 + ret[0];
+    int sum = readResult[1] * 256 + readResult[0];
     hum = sum ~/ 100;
     return;
   }
 
   Future<void> _parseBat(BluetoothCharacteristic c) async {
-    List<int> ret = await c.read();
-    bat = ret[0];
+    List<int> readResult;
+
+    try {
+      readResult = await c.read();
+    } on PlatformException {
+      // PlatformException indicates that a read was performed while another was in
+      // progress. Do nothing
+      return;
+    }
+
+    bat = readResult[0];
     return;
   }
 
