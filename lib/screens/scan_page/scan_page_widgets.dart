@@ -193,7 +193,10 @@ class ScanResults extends StatelessWidget {
             children: snapshot.data
                 .map((r) => ScanResultTile(
                       result: r,
-                      onConnectTap: () => inheritedBluetooth.connect(r.device),
+                      onConnectTap: () async {
+                          await inheritedBluetooth.connect(r.device);
+                          inheritedBluetooth.readAll();
+                        },
                       onDisconnectTap: () => inheritedBluetooth.disconnect(),
                     ))
                 .toList());
