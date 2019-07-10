@@ -48,7 +48,7 @@ class _ConnectedDeviceButton extends StatelessWidget {
     if (inheritedBluetooth.isConnected()) {
       return RaisedButton(
         child: Text("DISCONNECT"),
-        color: Colors.red,
+        color: Theme.of(context).accentColor,
         textColor: Colors.white,
         onPressed: () {
           onDisconnectTap();
@@ -140,7 +140,7 @@ class _ScanResultButton extends StatelessWidget {
     if (inheritedBluetooth.device != null && result.device.id == inheritedBluetooth.device.id) {
       return RaisedButton(
         child: Text("DISCONNECT"),
-        color: Colors.red,
+        color: Theme.of(context).accentColor,
         textColor: Colors.white,
         onPressed: () => onDisconnectTap(),
       );

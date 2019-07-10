@@ -20,10 +20,12 @@ class _HomePageState extends State<HomePage> {
         child: Container(
           child: Column(
             children: <Widget>[
+              Padding(padding: EdgeInsets.only(top: 30)),
               DataWidget(),
+              Padding(padding: EdgeInsets.only(top: 30)),
               TempHumChart(),
             ],
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
           ),
           height: MediaQuery.of(context).size.height -
               kToolbarHeight -

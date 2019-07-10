@@ -19,14 +19,16 @@ class _ScanPageState extends State<ScanPage> {
   void _buildConnectedDevice() {
     final InheritedBluetooth inheritedBluetooth =
         Provider.of<InheritedBluetooth>(context);
-    if (inheritedBluetooth.isConnected()) {
-      connectedDeviceWidget = ConnectedDeviceTile(
-        onConnectTap: inheritedBluetooth.connect,
-        onDisconnectTap: inheritedBluetooth.disconnect,
-      );
-    } else {
-      connectedDeviceWidget = Container();
-    }
+    setState(() {
+      if (inheritedBluetooth.isConnected()) {
+        connectedDeviceWidget = ConnectedDeviceTile(
+          onConnectTap: inheritedBluetooth.connect,
+          onDisconnectTap: inheritedBluetooth.disconnect,
+        );
+      } else {
+        connectedDeviceWidget = Container();
+      } 
+    });
   }
 
   Future<void> _scan() async {

@@ -1,4 +1,6 @@
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:charts_flutter/flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:myapp/local_data/database_entry.dart';
 import 'package:myapp/local_data/database_helper.dart';
@@ -12,7 +14,7 @@ class TempHumChart extends StatelessWidget {
     return [
       new charts.Series<Entry, DateTime>(
         id: 'Temperature',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        colorFn: (_, __) => Color(r: 252, g: 163, b: 17),
         domainFn: (Entry e, _) =>
             new DateTime.fromMillisecondsSinceEpoch(e.time * 1000),
         measureFn: (Entry e, _) {
@@ -26,7 +28,7 @@ class TempHumChart extends StatelessWidget {
       ),
       new charts.Series<Entry, DateTime>(
         id: 'Humidity',
-        colorFn: (_, __) => charts.MaterialPalette.deepOrange.shadeDefault,
+        colorFn: (_, __) => charts.MaterialPalette.black,
         domainFn: (Entry e, _) =>
             new DateTime.fromMillisecondsSinceEpoch(e.time * 1000),
         measureFn: (Entry e, _) => e.hum,
@@ -50,21 +52,39 @@ class TempHumChart extends StatelessWidget {
                   format: 'hh:mm', transitionFormat: 'hh:mm'),
               day: new charts.TimeFormatterSpec(
                   format: 'M/d/yy', transitionFormat: 'M/d/yy')),
+          renderSpec: new charts.SmallTickRendererSpec(
+            labelStyle: new charts.TextStyleSpec(
+              color: charts.MaterialPalette.black,
+            ),
+          ),
         ),
         primaryMeasureAxis: new charts.NumericAxisSpec(
-          tickProviderSpec:
-              new charts.BasicNumericTickProviderSpec(desiredTickCount: 5, zeroBound: false,),
-        ),
+            tickProviderSpec: new charts.BasicNumericTickProviderSpec(
+              desiredTickCount: 5,
+              zeroBound: false,
+            ),
+            renderSpec: new charts.GridlineRendererSpec(
+              labelStyle: new charts.TextStyleSpec(
+                color: Color(r: 252, g: 163, b: 17),
+              ),
+            )),
         secondaryMeasureAxis: new charts.NumericAxisSpec(
-          tickProviderSpec:
-              new charts.BasicNumericTickProviderSpec(desiredTickCount: 5, zeroBound: false,),
+          tickProviderSpec: new charts.BasicNumericTickProviderSpec(
+            desiredTickCount: 5,
+            zeroBound: false,
+          ),
+          renderSpec: new charts.GridlineRendererSpec(
+            labelStyle: new charts.TextStyleSpec(
+              color: charts.MaterialPalette.black,
+            ),
+          ),
         ),
         behaviors: [
           new charts.LinePointHighlighter(
-            showHorizontalFollowLine: charts.LinePointHighlighterFollowLineType.all,
-            showVerticalFollowLine: charts.LinePointHighlighterFollowLineType.nearest
-          ),
-          new charts.PanAndZoomBehavior(),
+              showHorizontalFollowLine:
+                  charts.LinePointHighlighterFollowLineType.none,
+              showVerticalFollowLine:
+                  charts.LinePointHighlighterFollowLineType.nearest),
         ],
       ),
     );

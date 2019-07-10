@@ -4,23 +4,30 @@ import 'package:myapp/local_data/settings_helper.dart';
 import 'package:provider/provider.dart';
 
 class DataWidget extends StatelessWidget {
-  Widget _buildTemp(InheritedBluetooth inheritedBluetooth, bool inCelsius) {
+  Widget _buildTemp(InheritedBluetooth inheritedBluetooth, bool inCelsius,
+      BuildContext context) {
     String roundedTemp;
     if (inCelsius) {
       roundedTemp = (inheritedBluetooth.temp ?? 0).toStringAsFixed(1);
     } else {
-      roundedTemp = ((inheritedBluetooth.temp ?? 0) * 9 / 5 + 32).toStringAsFixed(1);
+      roundedTemp =
+          ((inheritedBluetooth.temp ?? 0) * 9 / 5 + 32).toStringAsFixed(1);
     }
     return Text(
       '$roundedTemp\u00b0',
-      style: TextStyle(fontSize: 50),
+      style: TextStyle(
+        fontSize: 60,
+        fontFamily: 'Raleway',
+        color: Theme.of(context).accentColor,
+      ),
     );
   }
 
   Widget _buildHum(InheritedBluetooth inheritedBluetooth) {
     return Text(
       '${inheritedBluetooth.hum}%',
-      style: TextStyle(fontSize: 40),
+      style:
+          TextStyle(fontSize: 50, fontFamily: 'Raleway', color: Colors.black),
     );
   }
 
@@ -32,7 +39,7 @@ class DataWidget extends StatelessWidget {
     return Column(
       children: inheritedBluetooth.isConnected()
           ? <Widget>[
-              _buildTemp(inheritedBluetooth, inCelsius),
+              _buildTemp(inheritedBluetooth, inCelsius, context),
               _buildHum(inheritedBluetooth),
             ]
           : <Widget>[

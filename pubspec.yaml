@@ -45,6 +45,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: fonts/Raleway-Bold.ttf
+          weight: 700
+    - family: Oswald
+      fonts:
+        - asset: fonts/Oswald-Light.ttf
+          weight: 300
 
   # To add assets to your application, add an assets section, like this:
   # assets:
