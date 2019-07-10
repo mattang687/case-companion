@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/screens/home_page/screen_size.dart';
 
 import 'bottom_bar.dart';
 import 'data_widget.dart';
 import 'chart.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => new _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,17 +16,14 @@ class _HomePageState extends State<HomePage> {
         child: Container(
           child: Column(
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 30)),
-              DataWidget(),
-              Padding(padding: EdgeInsets.only(top: 30)),
-              TempHumChart(),
+              Padding(padding: EdgeInsets.only(top: screenHeightNoBars(context, divide: 20)),),
+              SizedBox(child: DataWidget(), height: screenHeightNoBars(context, divide: 4)),
+              Padding(padding: EdgeInsets.only(top: screenHeightNoBars(context, divide: 20)),),
+              SizedBox(child: TempHumChart(), height: screenHeightNoBars(context, divide: 5 / 3)),
+              Padding(padding: EdgeInsets.only(top: screenHeightNoBars(context, divide: 20)),),
             ],
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           ),
-          height: MediaQuery.of(context).size.height -
-              kToolbarHeight -
-              MediaQuery.of(context).padding.top -
-              MediaQuery.of(context).padding.bottom,
         ),
       ),
       floatingActionButton: FloatingRefreshButton(),

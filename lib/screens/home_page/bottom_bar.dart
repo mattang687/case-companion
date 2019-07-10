@@ -26,7 +26,7 @@ class DeviceInfoWidget extends StatelessWidget {
                         maxLines: 1,
                       ),
                       Text(
-                        '${'Battery: ${inheritedBluetooth.bat}%'}',
+                        'Battery: ${inheritedBluetooth.bat?? 0}%',
                         style: TextStyle(color: Colors.grey),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,

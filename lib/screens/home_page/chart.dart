@@ -10,11 +10,11 @@ import 'package:provider/provider.dart';
 class TempHumChart extends StatelessWidget {
   // turns list of entries into a graphable Series
   List<charts.Series<Entry, DateTime>> _parseEntries(
-      List<Entry> data, bool inCelsius) {
+      List<Entry> data, bool inCelsius, Color chartAccentColor) {
     return [
       new charts.Series<Entry, DateTime>(
         id: 'Temperature',
-        colorFn: (_, __) => Color(r: 252, g: 163, b: 17),
+        colorFn: (_, __) => chartAccentColor,
         domainFn: (Entry e, _) =>
             new DateTime.fromMillisecondsSinceEpoch(e.time * 1000),
         measureFn: (Entry e, _) {
@@ -39,12 +39,18 @@ class TempHumChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    int accentRed = theme.accentColor.red; 
+    int accentGreen = theme.accentColor.green;
+    int accentBlue = theme.accentColor.blue;
+    Color chartAccentColor = Color(r: accentRed, g: accentGreen, b: accentBlue);
+
     DatabaseHelper db = Provider.of<DatabaseHelper>(context);
     final bool inCelsius = Provider.of<SettingsHelper>(context).inCelsius;
     return SizedBox(
       height: MediaQuery.of(context).size.height / 2,
       child: charts.TimeSeriesChart(
-        _parseEntries(db.data, inCelsius),
+        _parseEntries(db.data, inCelsius, chartAccentColor),
         animate: true,
         domainAxis: new charts.DateTimeAxisSpec(
           tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
@@ -65,7 +71,7 @@ class TempHumChart extends StatelessWidget {
             ),
             renderSpec: new charts.GridlineRendererSpec(
               labelStyle: new charts.TextStyleSpec(
-                color: Color(r: 252, g: 163, b: 17),
+                color: chartAccentColor,
               ),
             )),
         secondaryMeasureAxis: new charts.NumericAxisSpec(
