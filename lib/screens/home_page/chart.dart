@@ -53,14 +53,17 @@ class TempHumChart extends StatelessWidget {
         ),
         primaryMeasureAxis: new charts.NumericAxisSpec(
           tickProviderSpec:
-              new charts.BasicNumericTickProviderSpec(desiredTickCount: 5),
+              new charts.BasicNumericTickProviderSpec(desiredTickCount: 5, zeroBound: false,),
         ),
         secondaryMeasureAxis: new charts.NumericAxisSpec(
           tickProviderSpec:
-              new charts.BasicNumericTickProviderSpec(desiredTickCount: 5),
+              new charts.BasicNumericTickProviderSpec(desiredTickCount: 5, zeroBound: false,),
         ),
         behaviors: [
-          new charts.LinePointHighlighter(),
+          new charts.LinePointHighlighter(
+            showHorizontalFollowLine: charts.LinePointHighlighterFollowLineType.all,
+            showVerticalFollowLine: charts.LinePointHighlighterFollowLineType.nearest
+          ),
           new charts.PanAndZoomBehavior(),
         ],
       ),

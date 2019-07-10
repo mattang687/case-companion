@@ -5,11 +5,11 @@ import 'package:provider/provider.dart';
 
 class DataWidget extends StatelessWidget {
   Widget _buildTemp(InheritedBluetooth inheritedBluetooth, bool inCelsius) {
-    int roundedTemp;
+    String roundedTemp;
     if (inCelsius) {
-      roundedTemp = (inheritedBluetooth.temp ?? 0).round();
+      roundedTemp = (inheritedBluetooth.temp ?? 0).toStringAsFixed(1);
     } else {
-      roundedTemp = ((inheritedBluetooth.temp ?? 0) * 9 / 5 + 32).round();
+      roundedTemp = ((inheritedBluetooth.temp ?? 0) * 9 / 5 + 32).toStringAsFixed(1);
     }
     return Text(
       '$roundedTemp\u00b0',
