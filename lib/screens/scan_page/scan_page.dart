@@ -50,7 +50,7 @@ class _ScanPageState extends State<ScanPage> {
       onWillPop: inheritedBluetooth.stopScan,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Connect to a device"),
+          title: Text("Connect to a Device"),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {

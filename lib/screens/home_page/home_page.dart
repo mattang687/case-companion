@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'bottom_bar.dart';
 import 'data_widget.dart';
-import 'modal_bottom_sheet.dart';
 import 'chart.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,16 +33,19 @@ class _HomePageState extends State<HomePage> {
               MediaQuery.of(context).padding.bottom,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.keyboard_arrow_up),
-        onPressed: () {
-          showModalBottomSheet<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return ModalBottomSheet();
-            },
-          );
-        },
+      floatingActionButton: FloatingRefreshButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        color: Theme.of(context).primaryColor,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            DeviceInfoWidget(),
+            ButtonWidget()
+          ],
+        )
       ),
     );
   }
