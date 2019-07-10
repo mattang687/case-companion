@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
 import 'package:myapp/local_data/database_helper.dart';
 import 'package:myapp/screens/scan_page/scan_page.dart';
+import 'package:myapp/screens/settings_page/settings_page.dart';
 import 'package:provider/provider.dart';
 
 class DeviceInfoWidget extends StatelessWidget {
@@ -114,7 +115,10 @@ class SettingsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.more_vert, color: Colors.white,),
-      onPressed: () {}
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SettingsPage()),
+      ),
     );
   }
 }
