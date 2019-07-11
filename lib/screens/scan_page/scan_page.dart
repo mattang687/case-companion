@@ -52,12 +52,6 @@ class _ScanPageState extends State<ScanPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Connect to a Device"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.cancel),
-              onPressed: inheritedBluetooth.disconnect,
-            ),
-          ],
         ),
         body: RefreshIndicator(
           child: SingleChildScrollView(
