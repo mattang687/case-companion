@@ -16,7 +16,6 @@ void main() {
         providers: [
           ChangeNotifierProvider<InheritedBluetooth>.value(
               value: InheritedBluetooth()),
-          ChangeNotifierProvider<SettingsHelper>.value(value: SettingsHelper()),
           ChangeNotifierProvider<DatabaseHelper>.value(value: DatabaseHelper()),
         ],
         child: MaterialApp(
@@ -28,7 +27,10 @@ void main() {
             primaryColorDark: Color.fromARGB(255, 40, 40, 40),
             fontFamily: 'Oswald',
           ),
-          home: HomePage()
+          home: ChangeNotifierProvider<SettingsHelper>.value(
+            value: SettingsHelper(),
+            child: HomePage(),
+          ),
         ),
       ),
     );

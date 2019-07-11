@@ -49,14 +49,15 @@ class InheritedBluetooth with ChangeNotifier {
     return;
   }
 
-  Future<void> disconnect() async {
+  // return true to satisfy WillPopScope on HomePage
+  Future<bool> disconnect() async {
     List<BluetoothDevice> devices = await flutterBlue.connectedDevices;
     if (devices.length != 0) {
       await devices[0].disconnect();
     }
     device = null;
     notifyListeners();
-    return;
+    return true;
   }
 
   // attempts to read the temperature

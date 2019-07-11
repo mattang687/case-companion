@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:myapp/local_data/settings_helper.dart';
 import 'package:provider/provider.dart';
 
-class SettingsPage extends StatelessWidget{
+class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-  SettingsHelper settingsHelper = Provider.of<SettingsHelper>(context);
+    SettingsHelper settingsHelper = Provider.of<SettingsHelper>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
@@ -22,7 +22,7 @@ class SettingsPage extends StatelessWidget{
 class UnitSettingTile extends StatefulWidget {
   const UnitSettingTile(this.initialValue);
   final bool initialValue;
-  
+
   @override
   State<StatefulWidget> createState() {
     return _UnitSettingTileState();
@@ -32,14 +32,8 @@ class UnitSettingTile extends StatefulWidget {
 class _UnitSettingTileState extends State<UnitSettingTile> {
   bool _inCelsius;
   final List<DropdownMenuItem<bool>> _menuItems = [
-    DropdownMenuItem(
-      value: true,
-      child: Text('Celsius')
-    ),
-    DropdownMenuItem(
-      value: false,
-      child: Text('Fahrenheit')
-    )
+    DropdownMenuItem(value: true, child: Text('Celsius')),
+    DropdownMenuItem(value: false, child: Text('Fahrenheit'))
   ];
 
   @override

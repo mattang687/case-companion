@@ -16,7 +16,7 @@ class ConnectedDeviceTile extends StatelessWidget {
         Provider.of<InheritedBluetooth>(context);
     return Card(
       child: ListTile(
-        // uses previous device to allow the user to reconnect after disconnecting
+        // uses previous device to allow the user to reconnect
         // without having to scan again
         title: new _ConnectedDeviceTitle(
           context: context,
@@ -195,10 +195,10 @@ class ScanResults extends StatelessWidget {
                 .map((r) => ScanResultTile(
                       result: r,
                       onConnectTap: () async {
+                        DatabaseHelper db =
+                            Provider.of<DatabaseHelper>(context);
                         await inheritedBluetooth.connect(r.device);
                         if (await inheritedBluetooth.readAll()) {
-                          DatabaseHelper db =
-                              Provider.of<DatabaseHelper>(context);
                           await db.save(
                             temp: inheritedBluetooth.temp,
                             hum: inheritedBluetooth.hum,
