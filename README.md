@@ -24,7 +24,7 @@ Bad weather can be pretty dangerous to musical instruments (my viola cracked in 
     * charts_flutter 0.6.0
     * provider 3.0.0
 * Arduino 1.8.9
-    *
+    * Arduino ESP32 1.0.2
 
 ## Installation
 ### Flutter
