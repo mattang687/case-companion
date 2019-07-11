@@ -18,16 +18,16 @@ class DataWidget extends StatelessWidget {
       style: TextStyle(
         fontSize: 70,
         fontFamily: 'Raleway',
-        color: Theme.of(context).accentColor,
+        color: Theme.of(context).highlightColor,
       ),
     );
   }
 
-  Widget _buildHum(InheritedBluetooth inheritedBluetooth) {
+  Widget _buildHum(InheritedBluetooth inheritedBluetooth, BuildContext context) {
     return Text(
       '${inheritedBluetooth.hum ?? 0}%',
       style:
-          TextStyle(fontSize: 50, fontFamily: 'Raleway', color: Colors.black),
+          TextStyle(fontSize: 50, fontFamily: 'Raleway', color: Theme.of(context).primaryColorDark),
     );
   }
 
@@ -43,7 +43,7 @@ class DataWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 _buildTemp(inheritedBluetooth, inCelsius, context),
-                _buildHum(inheritedBluetooth),
+                _buildHum(inheritedBluetooth, context),
               ],
             ),
           )
@@ -52,7 +52,7 @@ class DataWidget extends StatelessWidget {
             children: <Widget>[
               Text(
                 'Connect to a device to show data',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Colors.grey, fontSize: 18),
               )
             ],
           );

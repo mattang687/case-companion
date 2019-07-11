@@ -23,7 +23,9 @@ void main() {
           title: "Case Companion",
           theme: ThemeData(
             primaryColor: Color.fromARGB(255, 20, 33, 61),
+            highlightColor: Color.fromARGB(255, 194, 1, 20),
             accentColor: Color.fromARGB(255, 252, 163, 17),
+            primaryColorDark: Color.fromARGB(255, 40, 40, 40),
             fontFamily: 'Oswald',
           ),
           home: HomePage()

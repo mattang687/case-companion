@@ -11,6 +11,7 @@ class DeviceInfoWidget extends StatelessWidget {
     final InheritedBluetooth inheritedBluetooth =
         Provider.of<InheritedBluetooth>(context);
     return FlatButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.only(bottomEnd: Radius.circular(15), topEnd: Radius.circular(15),)),
       child: Row(
         children: <Widget>[
           SizedBox(
@@ -21,7 +22,7 @@ class DeviceInfoWidget extends StatelessWidget {
                   ? <Widget>[
                       Text(
                         '${inheritedBluetooth.device.name}',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Theme.of(context).accentColor),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -34,8 +35,8 @@ class DeviceInfoWidget extends StatelessWidget {
                     ]
                   : <Widget>[
                       Text(
-                        'Tap to Scan for Devices',
-                        style: TextStyle(color: Colors.white),
+                        'Look for Devices',
+                        style: TextStyle(color: Theme.of(context).accentColor),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -140,13 +141,13 @@ class FloatingRefreshButton extends StatelessWidget {
     InheritedBluetooth inheritedBluetooth =
         Provider.of<InheritedBluetooth>(context);
     if (inheritedBluetooth.isConnected()) {
-      await inheritedBluetooth.readAll();
-
-      DatabaseHelper db = Provider.of<DatabaseHelper>(context);
-      await db.save(
-        temp: inheritedBluetooth.temp,
-        hum: inheritedBluetooth.hum,
-      );
+      if (await inheritedBluetooth.readAll()) {
+        DatabaseHelper db = Provider.of<DatabaseHelper>(context);
+        await db.save(
+          temp: inheritedBluetooth.temp,
+          hum: inheritedBluetooth.hum,
+        );
+      }
     }
     return;
   }

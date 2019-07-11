@@ -59,15 +59,17 @@ class InheritedBluetooth with ChangeNotifier {
     return;
   }
 
-  Future<void> _parseTemp(BluetoothCharacteristic c) async {
+  // attempts to read the temperature
+  // returns true if successful
+  Future<bool> _parseTemp(BluetoothCharacteristic c) async {
     List<int> readResult;
 
     try {
       readResult = await c.read();
     } on PlatformException {
       // PlatformException indicates that a read was performed while another was in
-      // progress. Do nothing
-      return;
+      // progress. Do nothing and return false
+      return false;
     }
 
     // add up the bytes
@@ -78,43 +80,52 @@ class InheritedBluetooth with ChangeNotifier {
     } else {
       temp = sum / 100;
     }
-    return;
+    return true;
   }
 
-  Future<void> _parseHum(BluetoothCharacteristic c) async {
+  // attempts to read the humidity
+  // returns true if successful
+  Future<bool> _parseHum(BluetoothCharacteristic c) async {
     List<int> readResult;
 
     try {
       readResult = await c.read();
     } on PlatformException {
       // PlatformException indicates that a read was performed while another was in
-      // progress. Do nothing
-      return;
+      // progress. Do nothing and return false
+      return false;
     }
 
     // add up the bytes
     int sum = readResult[1] * 256 + readResult[0];
     hum = sum ~/ 100;
-    return;
+    return true;
   }
 
-  Future<void> _parseBat(BluetoothCharacteristic c) async {
+  // attempts to read the battery level
+  // returns true if successful
+  Future<bool> _parseBat(BluetoothCharacteristic c) async {
     List<int> readResult;
 
     try {
       readResult = await c.read();
     } on PlatformException {
       // PlatformException indicates that a read was performed while another was in
-      // progress. Do nothing
-      return;
+      // progress. Do nothing and return false
+      return false;
     }
 
     bat = readResult[0];
-    return;
+    return true;
   }
 
-  Future<void> readAll() async {
+  // reads all characteristics and returns true if temp and hum reads were successful
+  // other functions will use the result to determine whether to save the data or not
+  // and battery level is not relevant to the data stored in the database
+  Future<bool> readAll() async {
     List<BluetoothDevice> devices = await flutterBlue.connectedDevices;
+    bool tempSuccess;
+    bool humSuccess;
     if (devices.length != 0) {
       List<BluetoothService> services = await devices[0].discoverServices();
       for (BluetoothService s in services) {
@@ -122,10 +133,10 @@ class InheritedBluetooth with ChangeNotifier {
           // environmental sensing service
           for (BluetoothCharacteristic c in s.characteristics) {
             if (c.uuid == Guid("00002A6E-0000-1000-8000-00805F9B34FB")) {
-              await _parseTemp(c);
+              tempSuccess = await _parseTemp(c);
             }
             if (c.uuid == Guid("00002A6F-0000-1000-8000-00805F9B34FB")) {
-              await _parseHum(c);
+              humSuccess = await _parseHum(c);
             }
           }
         }
@@ -140,6 +151,6 @@ class InheritedBluetooth with ChangeNotifier {
       }
     }
     notifyListeners();
-    return;
+    return tempSuccess && humSuccess;
   }
 }

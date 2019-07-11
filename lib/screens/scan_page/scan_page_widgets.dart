@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:myapp/bluetooth/inherited_bluetooth.dart';
+import 'package:myapp/local_data/database_helper.dart';
 import 'package:provider/provider.dart';
 
 // displays current device and allows the user to disconnect and reconnect
@@ -194,9 +195,16 @@ class ScanResults extends StatelessWidget {
                 .map((r) => ScanResultTile(
                       result: r,
                       onConnectTap: () async {
-                          await inheritedBluetooth.connect(r.device);
-                          inheritedBluetooth.readAll();
-                        },
+                        await inheritedBluetooth.connect(r.device);
+                        if (await inheritedBluetooth.readAll()) {
+                          DatabaseHelper db =
+                              Provider.of<DatabaseHelper>(context);
+                          await db.save(
+                            temp: inheritedBluetooth.temp,
+                            hum: inheritedBluetooth.hum,
+                          );
+                        }
+                      },
                       onDisconnectTap: () => inheritedBluetooth.disconnect(),
                     ))
                 .toList());
