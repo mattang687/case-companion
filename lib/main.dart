@@ -13,24 +13,24 @@ void main() {
       .then((_) {
     runApp(
       MultiProvider(
+        // must provide database and settings to entire app because navigator.push() does not
+        // add the new screen as a child of the parent
         providers: [
           ChangeNotifierProvider<InheritedBluetooth>.value(
               value: InheritedBluetooth()),
           ChangeNotifierProvider<DatabaseHelper>.value(value: DatabaseHelper()),
+          ChangeNotifierProvider<SettingsHelper>.value(value: SettingsHelper())
         ],
         child: MaterialApp(
           title: "Case Companion",
           theme: ThemeData(
-            primaryColor: Color.fromARGB(255, 20, 33, 61),
-            highlightColor: Color.fromARGB(255, 194, 1, 20),
-            accentColor: Color.fromARGB(255, 252, 163, 17),
-            primaryColorDark: Color.fromARGB(255, 40, 40, 40),
+            primaryColor: Color.fromARGB(255, 20, 33, 61), // navy
+            highlightColor: Color.fromARGB(255, 194, 1, 20), // red
+            accentColor: Color.fromARGB(255, 252, 163, 17), // yellow
+            primaryColorDark: Color.fromARGB(255, 60, 60, 60), // dark grey
             fontFamily: 'Oswald',
           ),
-          home: ChangeNotifierProvider<SettingsHelper>.value(
-            value: SettingsHelper(),
-            child: HomePage(),
-          ),
+          home: HomePage(),
         ),
       ),
     );
