@@ -9,11 +9,11 @@ An embedded instrument case monitor created with Flutter and Arduino
 * [How it Works](#how-it-works)
 
 ## Introduction
-Bad weather can be pretty dangerous to musical instruments (my viola cracked in the winter a few years ago). Many solutions exist to combat unfriendly weather, like Dampits, humidifiers, covers, and expensive cases, but there's very little useful evidence of their effectiveness, since everyone's setup is so different. The Case Companion is my solution to this problem. It consists of this app and a [BLE-enabled ESP32](https://github.com/mattang687/case-companion-esp.git), and it allows musicians to record and view the temperature and humidity in their case over time. This was my first time using Flutter, and I've learned so much from this project. I hope this will be useful to someone, if not as a product itself then as a code example for flutter_blue and charts_flutter, since I couldn't find many examples for them as I was making this. Since this is something I intend to use daily, I will be maintaining it in my free time for the forseeable future, so please let me know if you have any suggestions for improvement!
+Bad weather can be pretty dangerous to musical instruments (my viola cracked in the winter a few years ago). Many solutions exist to combat unfriendly weather, like Dampits, humidifiers, covers, and expensive cases, but there's very little useful evidence of their effectiveness, since everyone's setup is so different. The Case Companion is my solution to this problem. It consists of this app and a [BLE-enabled ESP32](https://github.com/mattang687/case-companion-esp.git), and it allows musicians to record and view the temperature and humidity in their case over time. This was my first time using Flutter, and I've learned so much from this project. I hope this will be useful to someone, if not as a product itself then as a code example for flutter_blue and charts_flutter, since I couldn't find many examples for them as I was making this. This is something I hope to improve enough for daily use, so I'll be adding to it in my free time moving forward, though most of my issues with the system at the moment lie more on the hardware side.
 
 ## Key Features
 * Scan for and connect to nearby Bluetooth Low Energy (BLE) devices
-* Read and display temperature, humidity, and battery level from a compatible BLE device
+* Read and display temperature and humidity from a compatible BLE device
 * Store temperature and humidity data locally
 * Graph temperature and humidity over time
 
@@ -28,7 +28,7 @@ Bad weather can be pretty dangerous to musical instruments (my viola cracked in 
 
 ## Installation
 ### Flutter
-Note: I don't own a Mac or an iPhone, so I haven't been able to test this on iOS. All APIs used here are cross-platform, so it might work, but I am not able to test it. 
+Note: I don't own a Mac or an iPhone, so I haven't been able to test this on iOS. All APIs used here are cross-platform, so it should work, but I am not able to test it. 
 To install the app, you will need Flutter. Clone this repo and navigate to the Flutter directory. Then, connect your device and run
 ```
 flutter clean
@@ -44,12 +44,12 @@ flutter install
 for iOS.
 
 ### ESP32
-I'm currently putting together the hardware and software for the ESP32. Once I finish, I'll update the readme accordingly.
+I'm currently putting together the hardware and software for the ESP32. Once I finish, I'll update the readme accordingly. You can find the code for the ESP32 [here](https://github.com/mattang687/case-companion-esp.git).
 
 ## How it Works
 ### Reading Data
 The app allows you to scan for and connect to nearby BLE devices. If you connect to a compatible device, it will allow you to read the sensor data from the device.\
-The ESP32 I'm using exposes a Battery service containing a Battery Level characteristic, and an Environmnetal Sensing service containing Temperature and Humidity characteristics. These [services](https://www.bluetooth.com/specifications/gatt/services/) and [characteristics](https://www.bluetooth.com/specifications/gatt/characteristics/) use the 16-bit UUIDs defined by Bluetooth. Any BLE device with the same service/characteristic setup can be read by this app.\
+The ESP32 I'm using exposes aan Environmnetal Sensing service containing Temperature and Humidity characteristics. The [service](https://www.bluetooth.com/specifications/gatt/services/) and [characteristics](https://www.bluetooth.com/specifications/gatt/characteristics/) use the 16-bit UUIDs defined by Bluetooth. Any BLE device with the same service/characteristic setup can be read by this app.\
 I'm using the [flutter_blue](https://pub.dev/packages/flutter_blue) api to manage scanning for, connecting to, and reading from BLE devices.\
 All interactions with BLE and flutter_blue are wrapped in the InheritedBluetooth class and provided to the whole app, which makes upgrading flutter_blue through breaking changes simple. Since flutter_blue is still in alpha and rapidly changing, this has been quite useful and saved me a lot of time.
 
