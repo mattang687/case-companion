@@ -62,7 +62,9 @@ class TempHumChart extends StatelessWidget {
         domainAxis: new charts.DateTimeAxisSpec(
           tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
               minute: new charts.TimeFormatterSpec(
-                  format: 'hh:mm', transitionFormat: 'hh:mm'),
+                  format: 'h:mm', transitionFormat: 'h:mm'),
+              hour: new charts.TimeFormatterSpec(
+                  format: 'h:mm', transitionFormat: 'h:mm'),
               day: new charts.TimeFormatterSpec(
                   format: 'M/d/yy', transitionFormat: 'M/d/yy')),
           renderSpec: new charts.SmallTickRendererSpec(

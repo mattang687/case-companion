@@ -51,7 +51,7 @@ class DataWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'Connect to a device to show data',
+                'Connect to a Device to Show Data',
                 style: TextStyle(color: Colors.grey, fontSize: 18),
               )
             ],
