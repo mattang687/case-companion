@@ -12,7 +12,6 @@ class InheritedBluetooth with ChangeNotifier {
   List<BluetoothService> services;
   double temp;
   int hum;
-  int bat;
 
   bool isScanning;
 
@@ -103,26 +102,8 @@ class InheritedBluetooth with ChangeNotifier {
     return true;
   }
 
-  // attempts to read the battery level
-  // returns true if successful
-  Future<bool> _parseBat(BluetoothCharacteristic c) async {
-    List<int> readResult;
-
-    try {
-      readResult = await c.read();
-    } on PlatformException {
-      // PlatformException indicates that a read was performed while another was in
-      // progress. Do nothing and return false
-      return false;
-    }
-
-    bat = readResult[0];
-    return true;
-  }
-
   // reads all characteristics and returns true if temp and hum reads were successful
   // other functions will use the result to determine whether to save the data or not
-  // and battery level is not relevant to the data stored in the database
   Future<bool> readAll() async {
     List<BluetoothDevice> devices = await flutterBlue.connectedDevices;
     bool tempSuccess;
@@ -138,14 +119,6 @@ class InheritedBluetooth with ChangeNotifier {
             }
             if (c.uuid == Guid("00002A6F-0000-1000-8000-00805F9B34FB")) {
               humSuccess = await _parseHum(c);
-            }
-          }
-        }
-        if (s.uuid == Guid("0000180F-0000-1000-8000-00805F9B34FB")) {
-          // battery service
-          for (BluetoothCharacteristic c in s.characteristics) {
-            if (c.uuid == Guid("00002A19-0000-1000-8000-00805F9B34FB")) {
-              await _parseBat(c);
             }
           }
         }

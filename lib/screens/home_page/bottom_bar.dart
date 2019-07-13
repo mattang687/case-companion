@@ -11,42 +11,27 @@ class DeviceInfoWidget extends StatelessWidget {
     final InheritedBluetooth inheritedBluetooth =
         Provider.of<InheritedBluetooth>(context);
     return FlatButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.only(bottomEnd: Radius.circular(15), topEnd: Radius.circular(15),)),
-      child: Row(
-        children: <Widget>[
-          SizedBox(
-            height: 50,
-            width: MediaQuery.of(context).size.width / 3,
-            child: Column(
-              children: inheritedBluetooth.isConnected()
-                  ? <Widget>[
-                      Text(
-                        '${inheritedBluetooth.device.name}',
-                        style: TextStyle(color: Theme.of(context).accentColor),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                      Text(
-                        'Battery: ${inheritedBluetooth.bat?? 0}%',
-                        style: TextStyle(color: Colors.grey),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ]
-                  : <Widget>[
-                      Text(
-                        'Look for Devices',
-                        style: TextStyle(color: Theme.of(context).accentColor),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ],
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-            ),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusDirectional.only(
+        bottomEnd: Radius.circular(15),
+        topEnd: Radius.circular(15),
+      )),
+      child: SizedBox(
+          height: 50,
+          width: MediaQuery.of(context).size.width / 3,
+          child: Column(
+            children: <Widget>[
+              Text(
+                  '${inheritedBluetooth.isConnected() ? 'Connected' : 'Scan for Devices'}',
+                  style: TextStyle(color: Theme.of(context).accentColor),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+              ),
+            ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
           ),
-        ],
-      ),
+        ),
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ScanPage()),
@@ -115,7 +100,10 @@ class SettingsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.more_vert, color: Colors.white,),
+      icon: Icon(
+        Icons.more_vert,
+        color: Colors.white,
+      ),
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => SettingsPage()),
