@@ -1,5 +1,6 @@
 # Case Companion
-An instrument case monitoring system created with Flutter and Arduino \
+An instrument case monitoring system created with Flutter and Arduino
+
 ![screenshot](/images/case-companion-screenshot.jpg)
 
 ## Table of Contents
@@ -40,7 +41,7 @@ flutter build ios
 flutter install
 ```
 for iOS.
-\\
+
 The code and installation instructions for the ESP32 can be found [here](https://github.com/mattang687/case-companion-esp.git).
 
 ## How it Works
