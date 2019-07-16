@@ -1,6 +1,6 @@
 # Case Companion
 An instrument case monitoring system created with Flutter and Arduino
-![screenshot](https://github.com/mattang687/case-companion.git/images/case-companion-screenshot.jpg)
+![screenshot](/images/case-companion-screenshot.jpg)
 
 ## Table of Contents
 * [Introduction](#introduction)
